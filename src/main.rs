@@ -1,57 +1,55 @@
-use iced::{button, Align, Button, Column, Element, Sandbox, Settings, Text};
+// todo: i don't know what casing rust prefers
+// todo: i'd actually like to throw some testing around. I'm thinking of making this entire thing workable from the commandline
+// and then the gui stuff is just nice to throw on top. that should allow me plenty of tests i can run
+// on the base functionality
+use bitflags::bitflags;
 
-#[derive(Default)]
-struct Counter {
-    value: i32,
-    increment_button: button::State,
-    decrement_button: button::State,
+enum GoalType {
+    Annual,
+    Monthly,
+    Weekly,
+    Daily,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum Message {
-    IncrementPressed,
-    DecrementPressed,
+enum GoalStatus {
+    InProgress,
+    Successful,
+    Failed,
+    Retired,
 }
 
-impl Sandbox for Counter {
-    type Message = Message;
+enum GoalPriority {
+    Top,
+    High,
+    Middle,
+    Low,
+    Bottom,
+}
 
-    fn new() -> Self {
-        Self::default()
-    }
+bitflags! {
+    struct SmartGoalFlags: u8 { // todo: i don't really know how the u8 works here tbh
+        const SPECIFIC      = 0b00000001;
+        const MEASURABLE    = 0b00000010;
+        const ACTIONABLE    = 0b00000100;
+        const RELEVANT      = 0b00001000;
+        const TIME_BOUND    = 0b00010000;
+         const SMART = Self::SPECIFIC.bits | Self::MEASURABLE.bits | Self::ACTIONABLE.bits | Self::RELEVANT.bits | Self::TIME_BOUND.bits; // todo: might be able to use .all here
 
-    fn title(&self) -> String {
-        String::from("Counter - Iced")
-    }
-
-    fn view(&mut self) -> Element<Message> {
-        Column::new()
-            .padding(20)
-            .align_items(Align::Center)
-            .push(
-                Button::new(&mut self.increment_button, Text::new("Increment"))
-                    .on_press(Message::IncrementPressed),
-            )
-            .push(Text::new(&self.value.to_string()).size(50))
-            .push(
-                Button::new(&mut self.decrement_button, Text::new("Decrement"))
-                    .on_press(Message::DecrementPressed),
-            )
-            .into()
-    }
-
-    fn update(&mut self, message: Message) {
-        match message {
-            Message::IncrementPressed => {
-                self.value += 1;
-            }
-            Message::DecrementPressed => {
-                self.value -= 1;
-            }
-        }
+        // kinda want a display func for this
     }
 }
 
-pub fn main() -> iced::Result {
-    Counter::run(Settings::default())
+struct Goal {
+    g_type: GoalType, // todo: better name
+    text: String,     // todo: &str???
+    status: GoalStatus,
+    notes: String,
+    smart_flags: SmartGoalFlags, // todo: should this just be a u8???
+    priority: GoalPriority,      // todo: this might work better as a number
+                                 // parent: &Goal, // todo: this says i need a lifetime or something
+}
+// kinda want an is_smart function
+
+fn main() {
+    let goals: Vec<Goal> = Vec::new();
 }
