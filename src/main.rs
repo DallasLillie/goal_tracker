@@ -40,6 +40,7 @@ bitflags! {
 }
 
 struct Goal {
+    // todo: reorg here... also, im curious about the size of the struct
     g_type: GoalType, // todo: better name
     text: String,     // todo: &str???
     status: GoalStatus,
@@ -52,4 +53,6 @@ struct Goal {
 
 fn main() {
     let goals: Vec<Goal> = Vec::new();
+
+    // loading from a .csv to start
 }
