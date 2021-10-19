@@ -2,7 +2,11 @@
 // todo: i'd actually like to throw some testing around. I'm thinking of making this entire thing workable from the commandline
 // and then the gui stuff is just nice to throw on top. that should allow me plenty of tests i can run
 // on the base functionality
+use std::error::Error;
+
 use bitflags::bitflags;
+
+extern crate csv;
 
 enum GoalType {
     Annual,
@@ -51,8 +55,21 @@ struct Goal {
 }
 // kinda want an is_smart function
 
-fn main() {
+use std::io;
+fn run() -> Result<(), Box<Error>> {
     let goals: Vec<Goal> = Vec::new();
 
-    // loading from a .csv to start
+    let mut reader = csv::Reader::from_reader(io::stdin());
+    for result in reader.records() {
+        let record = result?;
+    }
+
+    Ok(())
+}
+
+fn main() {
+    if let Err(err) = run() {
+        println!("{}", err);
+        // process::exit(1);
+    }
 }
