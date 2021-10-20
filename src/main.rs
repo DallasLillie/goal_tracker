@@ -55,15 +55,47 @@ struct Goal {
 }
 // kinda want an is_smart function
 
-use std::io;
 fn run() -> Result<(), Box<Error>> {
-    let goals: Vec<Goal> = Vec::new();
-
-    let mut reader = csv::Reader::from_reader(io::stdin());
-    for result in reader.records() {
-        let record = result?;
-    }
-
+    let goalTest1 = Goal {
+        g_type: GoalType::Daily,
+        text: String::from("g1"),
+        status: GoalStatus::InProgress,
+        notes: String::from(""),
+        smart_flags: SmartGoalFlags::SMART,
+        priority: GoalPriority::Top,
+    };
+    let goalTest2 = Goal {
+        g_type: GoalType::Annual,
+        text: String::from("g2"),
+        status: GoalStatus::Failed,
+        notes: String::from("not empty"),
+        smart_flags: SmartGoalFlags::SPECIFIC | SmartGoalFlags::MEASURABLE,
+        priority: GoalPriority::High,
+    };
+    let goalTest3 = Goal {
+        g_type: GoalType::Monthly,
+        text: String::from("g3"),
+        status: GoalStatus::Retired,
+        notes: String::from("\"comma, perhaps\""),
+        smart_flags: SmartGoalFlags::RELEVANT | SmartGoalFlags::ACTIONABLE,
+        priority: GoalPriority::Middle,
+    };
+    let goalTest4 = Goal {
+        g_type: GoalType::Weekly,
+        text: String::from("g4"),
+        status: GoalStatus::Successful,
+        notes: String::from("quotes \"perhaps\""),
+        smart_flags: SmartGoalFlags::TIME_BOUND & SmartGoalFlags::MEASURABLE,
+        priority: GoalPriority::Low,
+    };
+    let goalTest5 = Goal {
+        g_type: GoalType::Daily,
+        text: String::from("g5"),
+        status: GoalStatus::InProgress,
+        notes: String::from("i have notes here"),
+        smart_flags: SmartGoalFlags::SMART,
+        priority: GoalPriority::Bottom,
+    };
     Ok(())
 }
 
