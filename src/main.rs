@@ -76,7 +76,7 @@ struct Goal {
 use std::io;
 use std::process;
 
-fn run() -> Result<(), Box<Error>> {
+fn run() -> Result<(), Box<dyn Error>> {
     let goal_test_1 = Goal {
         g_type: GoalType::Daily,
         text: String::from("g1"),
