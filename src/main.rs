@@ -6,7 +6,7 @@ use std::error::Error;
 
 use bitflags::bitflags;
 
-use serde::ser::{Serialize, SerializeSeq, Serializer};
+use serde::ser::{Serialize, Serializer};
 
 extern crate csv;
 extern crate serde;
@@ -56,14 +56,7 @@ impl Serialize for SmartGoalFlags {
     where
         S: Serializer,
     {
-        // self.bits().serialize(serializer)
-        let mut state = serializer.serialize_seq(Some(5))?;
-        state.serialize_element(&(*self & SmartGoalFlags::SPECIFIC).is_empty())?;
-        state.serialize_element(&(*self & SmartGoalFlags::MEASURABLE).is_empty())?;
-        state.serialize_element(&(*self & SmartGoalFlags::ACTIONABLE).is_empty())?;
-        state.serialize_element(&(*self & SmartGoalFlags::RELEVANT).is_empty())?;
-        state.serialize_element(&(*self & SmartGoalFlags::TIME_BOUND).is_empty())?;
-        state.end()
+        self.bits().serialize(serializer)
     }
 }
 
