@@ -6,7 +6,7 @@ use std::error::Error;
 
 use bitflags::bitflags;
 
-use serde::Serialize;
+use serde::ser::{Serialize, SerializeSeq, Serializer};
 
 extern crate csv;
 extern crate serde;
@@ -38,19 +38,7 @@ enum GoalPriority {
     Bottom,
 }
 
-mod smart_rep {
-    use serde::{self, Serialize, Serializer};
-
-    pub fn serialize<S>(date: &super::SmartGoalFlags, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        date.bits().serialize(serializer)
-    }
-}
-
 bitflags! {
-    #[derive(Serialize)]
     pub struct SmartGoalFlags: u8 { // todo: i don't really know how the u8 works here tbh
         const SPECIFIC      = 0b00000001;
         const MEASURABLE    = 0b00000010;
@@ -63,6 +51,22 @@ bitflags! {
     }
 }
 
+impl Serialize for SmartGoalFlags {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // self.bits().serialize(serializer)
+        let mut state = serializer.serialize_seq(Some(5))?;
+        state.serialize_element(&(*self & SmartGoalFlags::SPECIFIC).is_empty())?;
+        state.serialize_element(&(*self & SmartGoalFlags::MEASURABLE).is_empty())?;
+        state.serialize_element(&(*self & SmartGoalFlags::ACTIONABLE).is_empty())?;
+        state.serialize_element(&(*self & SmartGoalFlags::RELEVANT).is_empty())?;
+        state.serialize_element(&(*self & SmartGoalFlags::TIME_BOUND).is_empty())?;
+        state.end()
+    }
+}
+
 #[derive(Debug, Serialize)]
 struct Goal {
     // todo: reorg here... also, im curious about the size of the struct
@@ -70,10 +74,9 @@ struct Goal {
     text: String,     // todo: &str??
     status: GoalStatus,
     notes: String,
-    #[serde(with = "smart_rep")]
     smart_flags: SmartGoalFlags, // todo: should this just be a u8???
-    priority: GoalPriority, // todo: this might work better as a number
-                            // parent: &Goal, // todo: this says i need a lifetime or something
+    priority: GoalPriority,      // todo: this might work better as a number
+                                 // parent: &Goal, // todo: this says i need a lifetime or something
 }
 // kinda want an is_smart function
 
