@@ -124,8 +124,8 @@ fn load_goals(goals: &mut Vec<Goal>) -> Result<(), Box<dyn Error>> {
 fn run() -> Result<(), Box<dyn Error>> {
     let mut goals = Vec::new();
 
-    load_goals(&mut goals)
-    // save_goals(&goals)
+    load_goals(&mut goals)?;
+    save_goals(&goals)
 }
 
 fn main() {
