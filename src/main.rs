@@ -9,12 +9,9 @@ use bitflags::bitflags;
 use serde::ser::{Serialize, Serializer};
 
 extern crate csv;
-
-// todo: not convinced i need these three things
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-//
 
 #[derive(Debug, Serialize)]
 enum GoalType {
