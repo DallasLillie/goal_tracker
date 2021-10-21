@@ -7,6 +7,7 @@ use std::process;
 
 use bitflags::bitflags;
 
+use serde::de::{Deserialize, Deserializer};
 use serde::ser::{Serialize, Serializer};
 
 extern crate csv;
@@ -14,7 +15,7 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 enum GoalType {
     Annual,
     Monthly,
@@ -22,7 +23,7 @@ enum GoalType {
     Daily,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 enum GoalStatus {
     InProgress,
     Successful,
@@ -30,7 +31,7 @@ enum GoalStatus {
     Retired,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 enum GoalPriority {
     Top,
     High,
@@ -61,7 +62,21 @@ impl Serialize for SmartGoalFlags {
     }
 }
 
-#[derive(Debug, Serialize)]
+// todo: i have no idea why i need these lifetimes
+impl<'de> Deserialize<'de> for SmartGoalFlags {
+    fn deserialize<D>(deserializer: D) -> Result<SmartGoalFlags, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let bits = u8::deserialize(deserializer)?;
+        SmartGoalFlags::from_bits(bits).ok_or(serde::de::Error::custom(format!(
+            "Couldn't deserialize smart flags: {}",
+            bits
+        )))
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 struct Goal {
     // todo: reorg here... also, im curious about the size of the struct
     g_type: GoalType, // todo: better name
@@ -78,7 +93,7 @@ struct Goal {
 fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
     // todo: environment variable for an abs path?
     // todo: some kind of switch to enable debug mode that uses this?
-    let file_path = "..\\resources\\test.csv";
+    let file_path = "..\\resources\\save_test.csv";
 
     // todo: the docs for the csv crate say this:
     // "Note that we do not wrap the File in a buffer. The CSV reader does buffering internally,
@@ -95,60 +110,22 @@ fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
 }
 
 // todo: need result returns here i think...
-fn load_goals(goals: &mut Vec<Goal>) {
-    let goal_test_1 = Goal {
-        g_type: GoalType::Daily,
-        text: String::from("g1"),
-        status: GoalStatus::InProgress,
-        notes: String::from(""),
-        smart_flags: SmartGoalFlags::SMART,
-        priority: GoalPriority::Top,
-    };
-    let goal_test_2 = Goal {
-        g_type: GoalType::Annual,
-        text: String::from("g2"),
-        status: GoalStatus::Failed,
-        notes: String::from("not empty"),
-        smart_flags: SmartGoalFlags::SPECIFIC | SmartGoalFlags::MEASURABLE,
-        priority: GoalPriority::High,
-    };
-    let goal_test_3 = Goal {
-        g_type: GoalType::Monthly,
-        text: String::from("g3"),
-        status: GoalStatus::Retired,
-        notes: String::from("comma, perhaps"), // Note that the csv crate puts quotes around this
-        smart_flags: SmartGoalFlags::RELEVANT | SmartGoalFlags::ACTIONABLE,
-        priority: GoalPriority::Middle,
-    };
-    let goal_test_4 = Goal {
-        g_type: GoalType::Weekly,
-        text: String::from("g4"),
-        status: GoalStatus::Successful,
-        notes: String::from("quotes \"perhaps\""),
-        smart_flags: SmartGoalFlags::TIME_BOUND & SmartGoalFlags::MEASURABLE,
-        priority: GoalPriority::Low,
-    };
-    let goal_test_5 = Goal {
-        g_type: GoalType::Daily,
-        text: String::from("g5"),
-        status: GoalStatus::InProgress,
-        notes: String::from("i have notes here"),
-        smart_flags: SmartGoalFlags::SMART,
-        priority: GoalPriority::Bottom,
-    };
+fn load_goals(goals: &mut Vec<Goal>) -> Result<(), Box<dyn Error>> {
+    let file_path = "..\\resources\\load_test.csv";
+    let mut rdr = csv::Reader::from_path(file_path)?;
+    for result in rdr.deserialize() {
+        let goal: Goal = result?;
+        goals.push(goal);
+    }
 
-    goals.push(goal_test_1);
-    goals.push(goal_test_2);
-    goals.push(goal_test_3);
-    goals.push(goal_test_4);
-    goals.push(goal_test_5);
+    Ok(())
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
     let mut goals = Vec::new();
 
-    load_goals(&mut goals);
-    save_goals(&goals)
+    load_goals(&mut goals)
+    // save_goals(&goals)
 }
 
 fn main() {
