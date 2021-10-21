@@ -74,11 +74,28 @@ struct Goal {
 }
 // kinda want an is_smart function
 
-fn run() -> Result<(), Box<dyn Error>> {
+// todo: maybe make this function take an enum to designate which file type we're saving to?
+fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
     // todo: environment variable for an abs path?
     // todo: some kind of switch to enable debug mode that uses this?
     let file_path = "..\\resources\\test.csv";
 
+    // todo: the docs for the csv crate say this:
+    // "Note that we do not wrap the File in a buffer. The CSV reader does buffering internally,
+    // so there's no need for the caller to do it"
+    // im not 100% sure what that's talking about but it's probably important
+    let mut wtr = csv::Writer::from_path(file_path)?; // todo: atomic write
+
+    for goal in goals {
+        wtr.serialize(goal)?;
+    }
+
+    wtr.flush()?;
+    Ok(())
+}
+
+// todo: need result returns here i think...
+fn load_goals(goals: &mut Vec<Goal>) {
     let goal_test_1 = Goal {
         g_type: GoalType::Daily,
         text: String::from("g1"),
@@ -120,21 +137,18 @@ fn run() -> Result<(), Box<dyn Error>> {
         priority: GoalPriority::Bottom,
     };
 
-    // todo: the docs for the csv crate say this:
-    // "Note that we do not wrap the File in a buffer. The CSV reader does buffering internally,
-    // so there's no need for the caller to do it"
-    // im not 100% sure what that's talking about but it's probably important
-    let mut wtr = csv::Writer::from_path(file_path)?; // todo: atomic write
+    goals.push(goal_test_1);
+    goals.push(goal_test_2);
+    goals.push(goal_test_3);
+    goals.push(goal_test_4);
+    goals.push(goal_test_5);
+}
 
-    wtr.serialize(goal_test_1)?;
-    wtr.serialize(goal_test_2)?;
-    wtr.serialize(goal_test_3)?;
-    wtr.serialize(goal_test_4)?;
-    wtr.serialize(goal_test_5)?;
-    // goal_test_s are invalid here
+fn run() -> Result<(), Box<dyn Error>> {
+    let mut goals = Vec::new();
 
-    wtr.flush()?;
-    Ok(())
+    load_goals(&mut goals);
+    save_goals(&goals)
 }
 
 fn main() {
