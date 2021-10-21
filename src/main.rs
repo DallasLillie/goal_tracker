@@ -3,6 +3,7 @@
 // and then the gui stuff is just nice to throw on top. that should allow me plenty of tests i can run
 // on the base functionality
 use std::error::Error;
+use std::process;
 
 use bitflags::bitflags;
 
@@ -73,10 +74,11 @@ struct Goal {
 }
 // kinda want an is_smart function
 
-use std::io;
-use std::process;
-
 fn run() -> Result<(), Box<dyn Error>> {
+    // todo: environment variable for an abs path?
+    // todo: some kind of switch to enable debug mode that uses this?
+    let file_path = "..\\resources\\test.csv";
+
     let goal_test_1 = Goal {
         g_type: GoalType::Daily,
         text: String::from("g1"),
@@ -97,7 +99,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         g_type: GoalType::Monthly,
         text: String::from("g3"),
         status: GoalStatus::Retired,
-        notes: String::from("\"comma, perhaps\""),
+        notes: String::from("comma, perhaps"), // Note that the csv crate puts quotes around this
         smart_flags: SmartGoalFlags::RELEVANT | SmartGoalFlags::ACTIONABLE,
         priority: GoalPriority::Middle,
     };
@@ -118,15 +120,19 @@ fn run() -> Result<(), Box<dyn Error>> {
         priority: GoalPriority::Bottom,
     };
 
-    let mut wtr = csv::Writer::from_writer(io::stdout());
+    // todo: the docs for the csv crate say this:
+    // "Note that we do not wrap the File in a buffer. The CSV reader does buffering internally,
+    // so there's no need for the caller to do it"
+    // im not 100% sure what that's talking about but it's probably important
+    let mut wtr = csv::Writer::from_path(file_path)?; // todo: atomic write
 
     wtr.serialize(goal_test_1)?;
     wtr.serialize(goal_test_2)?;
     wtr.serialize(goal_test_3)?;
     wtr.serialize(goal_test_4)?;
     wtr.serialize(goal_test_5)?;
-
     // goal_test_s are invalid here
+
     wtr.flush()?;
     Ok(())
 }
