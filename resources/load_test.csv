@@ -1,6 +1,6 @@
-g_type,text,status,notes,smart_flags,priority
-Daily,g1,InProgress,,31,Top
-Annual,g2,Failed,not empty,3,High
-Monthly,g3,Retired,"comma, perhaps",12,Middle
-Weekly,g4,Successful,"quotes ""perhaps""",0,Low
-Daily,g5,InProgress,i have notes here,31,Bottom
+text,period,priority,smart_flags,status,notes
+g1,Day,Top,31,InProgress,
+g2,Year,High,3,Failed,not empty
+g3,Month,Middle,12,Retired,"comma, perhaps"
+g4,Week,Low,0,Successful,"quotes ""perhaps"""
+g5,Day,Bottom,31,InProgress,i have notes here
