@@ -80,7 +80,12 @@ pub struct Goal {
     notes: String,
     // parent: &Goal, // todo: this says i need a lifetime or something
 }
-// kinda want an is_smart function
+
+impl Goal {
+    pub fn is_smart(&self) -> bool {
+        return self.smart_flags.bits() == GoalSmartFlags::SMART.bits();
+    }
+}
 
 // todo: maybe make this function take an enum to designate which file type we're saving to?
 // todo: this would be a good function to implement some tests for practice
