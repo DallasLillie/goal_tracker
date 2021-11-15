@@ -1,6 +1,6 @@
-text,period,priority,smart_flags,status,notes
-g1,Day,Top,31,InProgress,
-g2,Year,High,3,Failed,not empty
-g3,Month,Middle,12,Retired,"comma, perhaps"
-g4,Week,Low,0,Successful,"quotes ""perhaps"""
-g5,Day,Bottom,31,InProgress,i have notes here
+uuid,text,period,priority,smart_flags,status,notes
+f868bf01-c14b-4840-a9f1-da2f8f9c86c4,g1,Day,Top,31,InProgress,
+b566a948-2266-4fe1-a55d-55dee6771fe6,g2,Year,High,3,Failed,not empty
+213492fe-552d-4850-9a1c-c367b02d6135,g3,Month,Middle,12,Retired,"comma, perhaps"
+2ab6c73f-8aaa-4b68-afd2-564226f39f34,g4,Week,Low,0,Successful,"quotes ""perhaps"""
+74aeac8f-519d-4fb4-acea-446bb855e64b,g5,Day,Bottom,31,InProgress,i have notes here

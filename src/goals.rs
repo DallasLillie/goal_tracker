@@ -2,6 +2,8 @@ use std::error::Error;
 
 use bitflags::bitflags;
 
+use uuid::Uuid;
+
 use serde::de::{Deserialize, Deserializer};
 use serde::ser::{Serialize, Serializer};
 
@@ -72,6 +74,7 @@ impl<'de> Deserialize<'de> for GoalSmartFlags {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Goal {
     // todo: im curious about the size of the struct
+    uuid: Uuid,
     text: String,
     period: GoalPeriod,
     priority: GoalPriority,
