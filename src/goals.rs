@@ -81,7 +81,7 @@ pub struct Goal {
     smart_flags: GoalSmartFlags,
     status: GoalStatus,
     notes: String,
-    // parent: &Goal, // todo: this says i need a lifetime or something
+    parent: Option<Uuid>,
 }
 
 impl Goal {
