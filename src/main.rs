@@ -1,5 +1,4 @@
-use std::error::Error;
-use std::process;
+use iced::{Element, Sandbox, Settings, Text};
 
 mod goals;
 
@@ -8,16 +7,30 @@ extern crate csv;
 #[macro_use]
 extern crate serde_derive;
 
-fn run() -> Result<(), Box<dyn Error>> {
-    let mut goals = Vec::new();
+// todo: current goal is to get a window loaded up and a button for loading goals from a file
+// it'll then show a preview of those goals
+struct MyApp;
 
-    goals::load_goals(&mut goals)?;
-    goals::save_goals(&goals)
+impl Sandbox for MyApp {
+    type Message = ();
+
+    fn new() -> MyApp {
+        MyApp
+    }
+
+    fn title(&self) -> String {
+        String::from("Goal Tracker")
+    }
+
+    fn update(&mut self, _message: Self::Message) {
+        // This app has no interactions
+    }
+
+    fn view(&mut self) -> Element<Self::Message> {
+        Text::new("Hello World").into()
+    }
 }
 
-fn main() {
-    if let Err(err) = run() {
-        println!("{}", err);
-        process::exit(1);
-    }
+fn main() -> iced::Result {
+    MyApp::run(Settings::default())
 }

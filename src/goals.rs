@@ -73,6 +73,7 @@ impl<'de> Deserialize<'de> for GoalSmartFlags {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Goal {
+    // todo: add float for percentage...maybe it's in an enum struct for if the goal has number measurements
     // todo: im curious about the size of the struct
     uuid: Uuid,
     text: String,
