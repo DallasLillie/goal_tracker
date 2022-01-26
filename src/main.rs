@@ -1,4 +1,6 @@
-use iced::{button, Align, Button, Column, Element, Sandbox, Settings, Text};
+use iced::{
+    button, Align, Button, Column, Container, Element, Row, Sandbox, Scrollable, Settings, Text,
+};
 
 mod goals;
 
@@ -45,17 +47,28 @@ impl Sandbox for MyApp {
     }
 
     fn view(&mut self) -> Element<Self::Message> {
-        Column::new()
-            .align_items(Align::Center)
+        let content = Row::new()
             .push(
-                Button::new(&mut self.load_goals_button_state, Text::new("Load Goals"))
-                    .on_press(Message::LoadGoalsPressed),
+                Column::new()
+                    .align_items(Align::Center)
+                    .push(
+                        Button::new(&mut self.load_goals_button_state, Text::new("Load Goals"))
+                            .on_press(Message::LoadGoalsPressed),
+                    )
+                    .push(
+                        Button::new(&mut self.save_goals_button_state, Text::new("Save Goals"))
+                            .on_press(Message::SaveGoalsPressed),
+                    ),
             )
             .push(
-                Button::new(&mut self.save_goals_button_state, Text::new("Save Goals"))
-                    .on_press(Message::SaveGoalsPressed),
-            )
-            .into()
+                Column::new().push(
+                    Row::new()
+                        .push(Text::new("Goal 1"))
+                        .push(Text::new("Daily")),
+                ),
+            );
+        // let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
+        Container::new(content).into()
     }
 }
 
