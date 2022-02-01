@@ -16,6 +16,7 @@ struct MyApp {
     load_goals_button_state: button::State,
     save_goals_button_state: button::State,
     goals: Vec<goals::Goal>,
+    goal_page: GoalPageWidget,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -69,6 +70,31 @@ impl Sandbox for MyApp {
             );
         // let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
         Container::new(content).into()
+    }
+}
+
+#[derive(Default)]
+struct GoalPageWidget {
+    goal_entries: Vec<GoalWidget>,
+}
+
+impl GoalPageWidget {
+    fn new() -> Self {
+        GoalPageWidget {
+            goal_entries: vec![GoalWidget::new(), GoalWidget::new(), GoalWidget::new()],
+        }
+    }
+}
+
+struct GoalWidget {
+    text: String,
+}
+
+impl GoalWidget {
+    fn new() -> Self {
+        GoalWidget {
+            text: "Daily Goal #".to_owned(),
+        }
     }
 }
 
