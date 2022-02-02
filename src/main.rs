@@ -11,7 +11,6 @@ extern crate serde_derive;
 
 // todo: current goal is to get a window loaded up and a button for loading goals from a file
 // it'll then show a preview of those goals
-#[derive(Default)]
 struct MyApp {
     load_goals_button_state: button::State,
     save_goals_button_state: button::State,
@@ -29,7 +28,12 @@ impl Sandbox for MyApp {
     type Message = Message;
 
     fn new() -> Self {
-        Self::default()
+        MyApp {
+            load_goals_button_state: button::State::new(),
+            save_goals_button_state: button::State::new(),
+            goals: Vec::new(),
+            goal_page: GoalPageWidget::new(),
+        }
     }
 
     fn title(&self) -> String {
@@ -61,19 +65,12 @@ impl Sandbox for MyApp {
                             .on_press(Message::SaveGoalsPressed),
                     ),
             )
-            .push(
-                Column::new().push(
-                    Row::new()
-                        .push(Text::new("Goal 1"))
-                        .push(Text::new("Daily")),
-                ),
-            );
+            .push(self.goal_page.view());
         // let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
         Container::new(content).into()
     }
 }
 
-#[derive(Default)]
 struct GoalPageWidget {
     goal_entries: Vec<GoalWidget>,
 }
@@ -83,6 +80,16 @@ impl GoalPageWidget {
         GoalPageWidget {
             goal_entries: vec![GoalWidget::new(), GoalWidget::new(), GoalWidget::new()],
         }
+    }
+
+    fn view(&mut self) -> Element<Message> {
+        let mut content = Column::new();
+
+        for goal_entry in self.goal_entries.iter_mut() {
+            content = content.push(goal_entry.view());
+        }
+
+        content.into()
     }
 }
 
@@ -95,6 +102,10 @@ impl GoalWidget {
         GoalWidget {
             text: "Daily Goal #".to_owned(),
         }
+    }
+
+    fn view(&mut self) -> Element<Message> {
+        Row::new().push(Text::new(self.text.to_string())).into()
     }
 }
 
