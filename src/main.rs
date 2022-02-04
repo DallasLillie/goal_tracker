@@ -43,7 +43,7 @@ impl Sandbox for MyApp {
     fn update(&mut self, message: Self::Message) {
         match message {
             Message::LoadGoalsPressed => {
-                goals::load_goals(&mut self.goals);
+                self.goal_page.update(message);
             }
             Message::SaveGoalsPressed => {
                 goals::save_goals(&self.goals);
@@ -78,7 +78,23 @@ struct GoalPageWidget {
 impl GoalPageWidget {
     fn new() -> Self {
         GoalPageWidget {
-            goal_entries: vec![GoalWidget::new(), GoalWidget::new(), GoalWidget::new()],
+            goal_entries: Vec::new(),
+        }
+    }
+
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::LoadGoalsPressed => {
+                let mut loaded_goals = Vec::new();
+                goals::load_goals(&mut loaded_goals);
+
+                while loaded_goals.len() > 0 {
+                    if let Some(loaded_goal) = loaded_goals.pop() {
+                        self.goal_entries.push(GoalWidget::new(loaded_goal));
+                    }
+                }
+            }
+            Message::SaveGoalsPressed => {}
         }
     }
 
@@ -94,18 +110,18 @@ impl GoalPageWidget {
 }
 
 struct GoalWidget {
-    text: String,
+    goal: goals::Goal,
 }
 
 impl GoalWidget {
-    fn new() -> Self {
-        GoalWidget {
-            text: "Daily Goal #".to_owned(),
-        }
+    fn new(new_goal: goals::Goal) -> Self {
+        GoalWidget { goal: new_goal }
     }
 
     fn view(&mut self) -> Element<Message> {
-        Row::new().push(Text::new(self.text.to_string())).into()
+        Row::new()
+            .push(Text::new(self.goal.text.to_string()))
+            .into()
     }
 }
 

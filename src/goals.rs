@@ -76,7 +76,7 @@ pub struct Goal {
     // todo: add float for percentage...maybe it's in an enum struct for if the goal has number measurements
     // todo: im curious about the size of the struct
     uuid: Uuid,
-    text: String,
+    pub text: String,
     period: GoalPeriod,
     priority: GoalPriority,
     smart_flags: GoalSmartFlags,
