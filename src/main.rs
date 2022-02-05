@@ -1,5 +1,6 @@
 use iced::{
-    button, Align, Button, Column, Container, Element, Row, Sandbox, Scrollable, Settings, Text,
+    button, Align, Button, Color, Column, Container, Element, Font, Length, Row, Sandbox,
+    Scrollable, Settings, Text,
 };
 
 mod goals;
@@ -111,22 +112,63 @@ impl GoalPageWidget {
 
 struct GoalWidget {
     goal: goals::Goal,
+    text_color: iced::Color,
 }
+
+const CALIBRI_FONT: Font = Font::External {
+    name: "Calibri",
+    bytes: include_bytes!("C:/Windows/fonts/calibri.ttf"), // todo: relative?
+};
 
 impl GoalWidget {
     fn new(new_goal: goals::Goal) -> Self {
-        GoalWidget { goal: new_goal }
+        GoalWidget {
+            goal: new_goal,
+            text_color: Color::from_rgb8(100, 149, 237),
+        }
     }
 
     fn view(&mut self) -> Element<Message> {
-        Row::new()
-            .push(Text::new(self.goal.text.to_string()))
-            .push(Text::new(self.goal.period.to_string()))
-            .push(Text::new(self.goal.priority.to_string()))
-            .push(Text::new(self.goal.smart_flags.to_string()))
-            .push(Text::new(self.goal.status.to_string()))
-            .push(Text::new(self.goal.notes.to_string()))
-            .into()
+        Container::new(
+            Row::new()
+                .push(
+                    Text::new(self.goal.text.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
+                    Text::new(self.goal.period.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
+                    Text::new(self.goal.priority.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
+                    Text::new(self.goal.smart_flags.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
+                    Text::new(self.goal.status.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
+                    Text::new(self.goal.notes.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                ),
+        )
+        .into()
     }
 }
 
