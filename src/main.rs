@@ -121,6 +121,11 @@ impl GoalWidget {
     fn view(&mut self) -> Element<Message> {
         Row::new()
             .push(Text::new(self.goal.text.to_string()))
+            .push(Text::new(self.goal.period.to_string()))
+            .push(Text::new(self.goal.priority.to_string()))
+            .push(Text::new(self.goal.smart_flags.to_string()))
+            .push(Text::new(self.goal.status.to_string()))
+            .push(Text::new(self.goal.notes.to_string()))
             .into()
     }
 }

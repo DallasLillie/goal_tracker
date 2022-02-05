@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::fmt;
 
 use bitflags::bitflags;
 
@@ -11,28 +12,62 @@ extern crate serde;
 
 // todo: this might be better off as a startDate/endDate
 #[derive(Debug, Serialize, Deserialize)]
-enum GoalPeriod {
+pub enum GoalPeriod {
     Year,
     Month,
     Week,
     Day,
 }
 
+impl fmt::Display for GoalPeriod {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            GoalPeriod::Year => f.write_str("Year"),
+            GoalPeriod::Month => f.write_str("Month"),
+            GoalPeriod::Week => f.write_str("Week"),
+            GoalPeriod::Day => f.write_str("Day"),
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
-enum GoalStatus {
+pub enum GoalStatus {
     InProgress,
     Successful,
     Failed,
     Retired,
 }
 
+impl fmt::Display for GoalStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            GoalStatus::InProgress => f.write_str("InProgress"),
+            GoalStatus::Successful => f.write_str("Successful"),
+            GoalStatus::Failed => f.write_str("Failed"),
+            GoalStatus::Retired => f.write_str("Retired"),
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
-enum GoalPriority {
+pub enum GoalPriority {
     Top,
     High,
     Middle,
     Low,
     Bottom,
+}
+
+impl fmt::Display for GoalPriority {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            GoalPriority::Top => f.write_str("Top"),
+            GoalPriority::High => f.write_str("High"),
+            GoalPriority::Middle => f.write_str("Middle"),
+            GoalPriority::Low => f.write_str("Low"),
+            GoalPriority::Bottom => f.write_str("Bottom"),
+        }
+    }
 }
 
 bitflags! {
@@ -43,8 +78,12 @@ bitflags! {
         const RELEVANT      = 0b00001000;
         const TIME_BOUND    = 0b00010000;
         const SMART = Self::SPECIFIC.bits | Self::MEASURABLE.bits | Self::ACHIEVABLE.bits | Self::RELEVANT.bits | Self::TIME_BOUND.bits; // todo: might be able to use .all here
+    }
+}
 
-        // todo: kinda want a display func for this
+impl fmt::Display for GoalSmartFlags {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.bits())
     }
 }
 
@@ -77,11 +116,11 @@ pub struct Goal {
     // todo: im curious about the size of the struct
     uuid: Uuid,
     pub text: String,
-    period: GoalPeriod,
-    priority: GoalPriority,
-    smart_flags: GoalSmartFlags,
-    status: GoalStatus,
-    notes: String,
+    pub period: GoalPeriod,
+    pub priority: GoalPriority,
+    pub smart_flags: GoalSmartFlags,
+    pub status: GoalStatus,
+    pub notes: String,
     parent: Option<Uuid>,
 }
 
