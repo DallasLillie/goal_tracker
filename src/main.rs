@@ -11,16 +11,19 @@ extern crate csv;
 extern crate serde_derive;
 
 struct MyApp {
-    load_goals_button_state: button::State,
-    save_goals_button_state: button::State,
     goals: Vec<goals::Goal>,
     goal_page: GoalPageWidget,
+    tool_bar: ToolBarWidget,
 }
 
 #[derive(Debug, Clone, Copy)]
 enum Message {
     LoadGoalsPressed,
     SaveGoalsPressed,
+    CreateGoalPressed,
+    YearlyReviewPressed,
+    MonthlyReviewPressed,
+    WeeklyReviewPressed,
 }
 
 impl Sandbox for MyApp {
@@ -28,10 +31,9 @@ impl Sandbox for MyApp {
 
     fn new() -> Self {
         MyApp {
-            load_goals_button_state: button::State::new(),
-            save_goals_button_state: button::State::new(),
             goals: Vec::new(),
             goal_page: GoalPageWidget::new(),
+            tool_bar: ToolBarWidget::new(),
         }
     }
 
@@ -40,33 +42,66 @@ impl Sandbox for MyApp {
     }
 
     fn update(&mut self, message: Self::Message) {
-        match message {
-            Message::LoadGoalsPressed => {
-                self.goal_page.update(message);
-            }
-            Message::SaveGoalsPressed => {
-                goals::save_goals(&self.goals);
-            }
-        }
+        self.goal_page.update(message);
     }
 
     fn view(&mut self) -> Element<Self::Message> {
-        let content = Row::new()
-            .push(
-                Column::new()
-                    .align_items(Align::Center)
-                    .push(
-                        Button::new(&mut self.load_goals_button_state, Text::new("Load Goals"))
-                            .on_press(Message::LoadGoalsPressed),
-                    )
-                    .push(
-                        Button::new(&mut self.save_goals_button_state, Text::new("Save Goals"))
-                            .on_press(Message::SaveGoalsPressed),
-                    ),
-            )
+        let content = Column::new()
+            .push(self.tool_bar.view())
             .push(self.goal_page.view());
         // let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
         Container::new(content).into()
+    }
+}
+
+struct ToolBarWidget {
+    load_goals_button_state: button::State,
+    save_goals_button_state: button::State,
+    create_goal_button_state: button::State,
+    yearly_review_button_state: button::State,
+    monthly_review_button_state: button::State,
+    weekly_review_button_state: button::State,
+}
+
+impl ToolBarWidget {
+    fn new() -> Self {
+        ToolBarWidget {
+            load_goals_button_state: button::State::new(),
+            save_goals_button_state: button::State::new(),
+            create_goal_button_state: button::State::new(),
+            yearly_review_button_state: button::State::new(),
+            monthly_review_button_state: button::State::new(),
+            weekly_review_button_state: button::State::new(),
+        }
+    }
+
+    fn view(&mut self) -> Element<Message> {
+        Row::new()
+        .push(
+            Button::new(&mut self.load_goals_button_state, Text::new("Load Goals"))
+                .on_press(Message::LoadGoalsPressed),
+        )
+        .push(
+            Button::new(&mut self.save_goals_button_state, Text::new("Save Goals"))
+                .on_press(Message::SaveGoalsPressed),
+        )
+        .push(
+            Button::new(&mut self.create_goal_button_state, Text::new("Create New Goal"))
+                .on_press(Message::CreateGoalPressed),
+        )
+        .push(
+            Button::new(&mut self.yearly_review_button_state, Text::new("Yearly Review"))
+                .on_press(Message::YearlyReviewPressed),
+        )
+        .push(
+            Button::new(&mut self.monthly_review_button_state, Text::new("Monthly Review"))
+                .on_press(Message::MonthlyReviewPressed),
+        )
+        .push(
+            Button::new(&mut self.weekly_review_button_state, Text::new("Weekly Review"))
+                .on_press(Message::WeeklyReviewPressed),
+        )
+        .into()
     }
 }
 
@@ -93,7 +128,7 @@ impl GoalPageWidget {
                     }
                 }
             }
-            Message::SaveGoalsPressed => {}
+            _ => {}
         }
     }
 
