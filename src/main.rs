@@ -10,8 +10,6 @@ extern crate csv;
 #[macro_use]
 extern crate serde_derive;
 
-// todo: current goal is to get a window loaded up and a button for loading goals from a file
-// it'll then show a preview of those goals
 struct MyApp {
     load_goals_button_state: button::State,
     save_goals_button_state: button::State,
@@ -130,7 +128,7 @@ impl GoalWidget {
 
     fn view(&mut self) -> Element<Message> {
         Container::new(
-            Row::new()
+            Row::new().spacing(10)
                 .push(
                     Text::new(self.goal.text.to_string())
                         .size(28)
