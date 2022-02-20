@@ -14,6 +14,7 @@ struct MyApp {
     goals: Vec<goals::Goal>,
     goal_page: GoalPageWidget,
     tool_bar: ToolBarWidget,
+    current_page: ApplicationPage,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -26,6 +27,11 @@ enum Message {
     WeeklyReviewPressed,
 }
 
+enum ApplicationPage {
+    HomePage,
+    CreateGoalPage,
+}
+
 impl Sandbox for MyApp {
     type Message = Message;
 
@@ -34,6 +40,7 @@ impl Sandbox for MyApp {
             goals: Vec::new(),
             goal_page: GoalPageWidget::new(),
             tool_bar: ToolBarWidget::new(),
+            current_page: ApplicationPage::HomePage,
         }
     }
 
@@ -42,15 +49,35 @@ impl Sandbox for MyApp {
     }
 
     fn update(&mut self, message: Self::Message) {
-        self.goal_page.update(message);
+        match self.current_page {
+            ApplicationPage::HomePage => match message {
+                Message::CreateGoalPressed => {
+                    // todo: This should probably be a Message::ChangePage(ApplicationPage) sent by the tool bar actually
+                    self.current_page = ApplicationPage::CreateGoalPage;
+                }
+                _ => {
+                    self.goal_page.update(message);
+                }
+            },
+            ApplicationPage::CreateGoalPage => {} // todo: what is it to create a goal?
+        }
     }
 
     fn view(&mut self) -> Element<Self::Message> {
-        let content = Column::new()
-            .push(self.tool_bar.view())
-            .push(self.goal_page.view());
-        // let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
-        Container::new(content).into()
+        match self.current_page {
+            ApplicationPage::HomePage => {
+                let content = Column::new()
+                    .push(Text::new("Home"))
+                    .push(self.tool_bar.view())
+                    .push(self.goal_page.view());
+                // let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
+                Container::new(content).into()
+            }
+            ApplicationPage::CreateGoalPage => {
+                let content = Column::new().push(Text::new("Create New Goal"));
+                Container::new(content).into()
+            }
+        }
     }
 }
 
@@ -77,31 +104,43 @@ impl ToolBarWidget {
 
     fn view(&mut self) -> Element<Message> {
         Row::new()
-        .push(
-            Button::new(&mut self.load_goals_button_state, Text::new("Load Goals"))
-                .on_press(Message::LoadGoalsPressed),
-        )
-        .push(
-            Button::new(&mut self.save_goals_button_state, Text::new("Save Goals"))
-                .on_press(Message::SaveGoalsPressed),
-        )
-        .push(
-            Button::new(&mut self.create_goal_button_state, Text::new("Create New Goal"))
+            .push(
+                Button::new(&mut self.load_goals_button_state, Text::new("Load Goals"))
+                    .on_press(Message::LoadGoalsPressed),
+            )
+            .push(
+                Button::new(&mut self.save_goals_button_state, Text::new("Save Goals"))
+                    .on_press(Message::SaveGoalsPressed),
+            )
+            .push(
+                Button::new(
+                    &mut self.create_goal_button_state,
+                    Text::new("Create New Goal"),
+                )
                 .on_press(Message::CreateGoalPressed),
-        )
-        .push(
-            Button::new(&mut self.yearly_review_button_state, Text::new("Yearly Review"))
+            )
+            .push(
+                Button::new(
+                    &mut self.yearly_review_button_state,
+                    Text::new("Yearly Review"),
+                )
                 .on_press(Message::YearlyReviewPressed),
-        )
-        .push(
-            Button::new(&mut self.monthly_review_button_state, Text::new("Monthly Review"))
+            )
+            .push(
+                Button::new(
+                    &mut self.monthly_review_button_state,
+                    Text::new("Monthly Review"),
+                )
                 .on_press(Message::MonthlyReviewPressed),
-        )
-        .push(
-            Button::new(&mut self.weekly_review_button_state, Text::new("Weekly Review"))
+            )
+            .push(
+                Button::new(
+                    &mut self.weekly_review_button_state,
+                    Text::new("Weekly Review"),
+                )
                 .on_press(Message::WeeklyReviewPressed),
-        )
-        .into()
+            )
+            .into()
     }
 }
 
@@ -163,7 +202,8 @@ impl GoalWidget {
 
     fn view(&mut self) -> Element<Message> {
         Container::new(
-            Row::new().spacing(10)
+            Row::new()
+                .spacing(10)
                 .push(
                     Text::new(self.goal.text.to_string())
                         .size(28)
