@@ -1,7 +1,9 @@
 use iced::{
-    button, Align, Button, Color, Column, Container, Element, Font, Length, Row, Sandbox,
-    Scrollable, Settings, Text,
+    button, executor, Align, Application, Button, Clipboard, Color, Column, Command, Container,
+    Element, Font, Length, Row, Sandbox, Scrollable, Settings, Text,
 };
+
+use std::future;
 
 mod goals;
 
@@ -14,6 +16,7 @@ struct MyApp {
     goals: Vec<goals::Goal>,
     goal_page: GoalPageWidget,
     tool_bar: ToolBarWidget,
+    create_new_goal_page: CreateNewGoalPage,
     current_page: ApplicationPage,
 }
 
@@ -25,41 +28,53 @@ enum Message {
     YearlyReviewPressed,
     MonthlyReviewPressed,
     WeeklyReviewPressed,
+    ChangePage(ApplicationPage),
+    CreateGoalPageCreateGoalPressed, // todo: kind of annoying tracking every button pressed message for the whole program in this one message enum
+    CreateGoalPageCancelPressed,
 }
 
+#[derive(Debug, Clone, Copy)]
 enum ApplicationPage {
     HomePage,
     CreateGoalPage,
 }
 
-impl Sandbox for MyApp {
+// todo: alright this has to start being separated into other files
+impl Application for MyApp {
     type Message = Message;
+    type Flags = ();
+    type Executor = executor::Default;
 
-    fn new() -> Self {
-        MyApp {
-            goals: Vec::new(),
-            goal_page: GoalPageWidget::new(),
-            tool_bar: ToolBarWidget::new(),
-            current_page: ApplicationPage::HomePage,
-        }
+    fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
+        (
+            MyApp {
+                goals: Vec::new(),
+                goal_page: GoalPageWidget::new(), // todo: should probably have a "home_page" that houses this stuff
+                tool_bar: ToolBarWidget::new(),
+                current_page: ApplicationPage::HomePage,
+                create_new_goal_page: CreateNewGoalPage::new(),
+            },
+            Command::none(),
+        )
     }
 
     fn title(&self) -> String {
         String::from("Goal Tracker")
     }
 
-    fn update(&mut self, message: Self::Message) {
-        match self.current_page {
-            ApplicationPage::HomePage => match message {
-                Message::CreateGoalPressed => {
-                    // todo: This should probably be a Message::ChangePage(ApplicationPage) sent by the tool bar actually
-                    self.current_page = ApplicationPage::CreateGoalPage;
+    fn update(&mut self, message: Message, _clip_board: &mut Clipboard) -> Command<Message> {
+        match message {
+            Message::ChangePage(new_page) => {
+                self.current_page = new_page;
+                Command::none()
+            }
+            _ => match self.current_page {
+                ApplicationPage::HomePage => {
+                    self.goal_page.update(message); // todo: need to collect commands from widgets and then send them all...which sounds bad too tbh. but something has to change here
+                    self.tool_bar.update(message) // todo: i wonder how order here affects the way the messages are processed if toolbar sends a new message before goal_page has a chance to update
                 }
-                _ => {
-                    self.goal_page.update(message);
-                }
+                ApplicationPage::CreateGoalPage => self.create_new_goal_page.update(message),
             },
-            ApplicationPage::CreateGoalPage => {} // todo: what is it to create a goal?
         }
     }
 
@@ -70,13 +85,10 @@ impl Sandbox for MyApp {
                     .push(Text::new("Home"))
                     .push(self.tool_bar.view())
                     .push(self.goal_page.view());
-                // let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
+                // todo: let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
                 Container::new(content).into()
             }
-            ApplicationPage::CreateGoalPage => {
-                let content = Column::new().push(Text::new("Create New Goal"));
-                Container::new(content).into()
-            }
+            ApplicationPage::CreateGoalPage => self.create_new_goal_page.view(),
         }
     }
 }
@@ -99,6 +111,16 @@ impl ToolBarWidget {
             yearly_review_button_state: button::State::new(),
             monthly_review_button_state: button::State::new(),
             weekly_review_button_state: button::State::new(),
+        }
+    }
+
+    fn update(&mut self, message: Message) -> Command<Message> {
+        match message {
+            Message::CreateGoalPressed => Command::perform(
+                future::ready(()), // can't find a way to send a message without a future involved
+                |_| Message::ChangePage(ApplicationPage::CreateGoalPage),
+            ),
+            _ => Command::none(),
         }
     }
 
@@ -245,6 +267,51 @@ impl GoalWidget {
     }
 }
 
-fn main() -> iced::Result {
+struct CreateNewGoalPage {
+    confirm_create_goal_button_state: button::State,
+    cancel_create_goal_button_state: button::State,
+}
+
+impl CreateNewGoalPage {
+    fn new() -> Self {
+        CreateNewGoalPage {
+            confirm_create_goal_button_state: button::State::new(),
+            cancel_create_goal_button_state: button::State::new(),
+        }
+    }
+
+    fn update(&mut self, message: Message) -> Command<Message> {
+        match message {
+            Message::CreateGoalPageCancelPressed => Command::perform(
+                future::ready(()), // can't find a way to send a message without a future involved
+                |_| Message::ChangePage(ApplicationPage::HomePage),
+            ),
+            _ => Command::none(),
+        }
+    }
+
+    fn view(&mut self) -> Element<Message> {
+        let content = Column::new().push(Text::new("Create New Goal")).push(
+            Row::new()
+                .push(
+                    Button::new(
+                        &mut self.cancel_create_goal_button_state,
+                        Text::new("Cancel"),
+                    )
+                    .on_press(Message::CreateGoalPageCancelPressed),
+                )
+                .push(
+                    Button::new(
+                        &mut self.confirm_create_goal_button_state,
+                        Text::new("Create Goal"),
+                    )
+                    .on_press(Message::CreateGoalPageCreateGoalPressed),
+                ),
+        );
+        Container::new(content).into()
+    }
+}
+
+pub fn main() -> iced::Result {
     MyApp::run(Settings::default())
 }
