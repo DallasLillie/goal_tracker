@@ -11,7 +11,7 @@ use serde::ser::{Serialize, Serializer};
 extern crate serde;
 
 // todo: this might be better off as a startDate/endDate
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum GoalPeriod {
     Year,
     Month,
@@ -30,7 +30,7 @@ impl fmt::Display for GoalPeriod {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum GoalStatus {
     InProgress,
     Successful,
@@ -49,7 +49,7 @@ impl fmt::Display for GoalStatus {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum GoalPriority {
     Top,
     High,
@@ -110,7 +110,7 @@ impl<'de> Deserialize<'de> for GoalSmartFlags {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Goal {
     // todo: add float for percentage...maybe it's in an enum struct for if the goal has number measurements
     // todo: im curious about the size of the struct
@@ -124,11 +124,11 @@ pub struct Goal {
     parent: Option<Uuid>,
 }
 
-impl Goal {
-    pub fn is_smart(&self) -> bool {
-        return self.smart_flags.bits() == GoalSmartFlags::SMART.bits();
-    }
-}
+// impl Goal {
+//     pub fn is_smart(&self) -> bool {
+//         return self.smart_flags.bits() == GoalSmartFlags::SMART.bits();
+//     }
+// }
 
 // todo: maybe make this function take an enum to designate which file type we're saving to?
 // todo: this would be a good function to implement some tests for practice
