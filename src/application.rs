@@ -10,7 +10,6 @@ pub struct MyApp {
     current_page: ApplicationPage,
 }
 
-// todo: alright this has to start being separated into other files
 impl Application for MyApp {
     type Message = Message;
     type Flags = ();
@@ -40,8 +39,9 @@ impl Application for MyApp {
             }
             _ => match self.current_page {
                 ApplicationPage::HomePage => {
+                    let cloned_message = message.clone(); // todo: cloning here seems like it could lead down a bad path in the long run
                     self.goal_page.update(message); // todo: need to collect commands from widgets and then send them all...which sounds bad too tbh. but something has to change here
-                    self.tool_bar.update(message) // todo: i wonder how order here affects the way the messages are processed if toolbar sends a new message before goal_page has a chance to update
+                    self.tool_bar.update(cloned_message) // todo: i wonder how order here affects the way the messages are processed if toolbar sends a new message before goal_page has a chance to update
                 }
                 ApplicationPage::CreateGoalPage => self.create_new_goal_page.update(message),
             },

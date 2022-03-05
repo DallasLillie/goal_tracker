@@ -32,7 +32,13 @@ impl GoalWidget {
                         .color(self.text_color),
                 )
                 .push(
-                    Text::new(self.goal.period.to_string())
+                    Text::new(self.goal.start_date.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
+                    Text::new(self.goal.due_date.to_string())
                         .size(28)
                         .font(CALIBRI_FONT)
                         .color(self.text_color),
@@ -45,6 +51,12 @@ impl GoalWidget {
                 )
                 .push(
                     Text::new(self.goal.smart_flags.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
+                    Text::new(self.goal.progress_type.to_string())
                         .size(28)
                         .font(CALIBRI_FONT)
                         .color(self.text_color),

@@ -2,40 +2,45 @@ use std::error::Error;
 use std::fmt;
 
 use bitflags::bitflags;
-
-use uuid::Uuid;
-
+use chrono::NaiveDate;
 use serde::de::{Deserialize, Deserializer};
 use serde::ser::{Serialize, Serializer};
+use uuid::Uuid;
 
 extern crate serde;
 
-// todo: this might be better off as a startDate/endDate
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub enum GoalPeriod {
-    Year,
-    Month,
-    Week,
-    Day,
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+pub enum GoalProgressType {
+    DoneOrNot(bool),
+    DoXManyTimes(
+        (
+            u16, // current_progress, 0-4, 0-31, 0-52, 0-356
+            u8,  // required_completion_percentage, 0-100
+        ),
+    ),
 }
 
-impl fmt::Display for GoalPeriod {
+impl fmt::Display for GoalProgressType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            GoalPeriod::Year => f.write_str("Year"),
-            GoalPeriod::Month => f.write_str("Month"),
-            GoalPeriod::Week => f.write_str("Week"),
-            GoalPeriod::Day => f.write_str("Day"),
+            GoalProgressType::DoneOrNot(_) => f.write_str("DoneOrNot"),
+            GoalProgressType::DoXManyTimes(_) => f.write_str("DoXManyTimes"),
         }
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub enum GoalStatus {
     InProgress,
     Successful,
     Failed,
     Retired,
+}
+
+impl Default for GoalStatus {
+    fn default() -> GoalStatus {
+        GoalStatus::InProgress
+    }
 }
 
 impl fmt::Display for GoalStatus {
@@ -49,13 +54,19 @@ impl fmt::Display for GoalStatus {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub enum GoalPriority {
     Top,
     High,
     Middle,
     Low,
     Bottom,
+}
+
+impl Default for GoalPriority {
+    fn default() -> GoalPriority {
+        GoalPriority::Middle
+    }
 }
 
 impl fmt::Display for GoalPriority {
@@ -112,24 +123,20 @@ impl<'de> Deserialize<'de> for GoalSmartFlags {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Goal {
-    // todo: add float for percentage...maybe it's in an enum struct for if the goal has number measurements
     // todo: im curious about the size of the struct
     uuid: Uuid,
     pub text: String,
-    pub period: GoalPeriod,
+    pub start_date: NaiveDate,
+    pub due_date: NaiveDate,
     pub priority: GoalPriority,
     pub smart_flags: GoalSmartFlags,
+    pub progress_type: GoalProgressType,
     pub status: GoalStatus,
     pub notes: String,
     parent: Option<Uuid>,
 }
 
-// impl Goal {
-//     pub fn is_smart(&self) -> bool {
-//         return self.smart_flags.bits() == GoalSmartFlags::SMART.bits();
-//     }
-// }
-
+// todo: this function feels weird here. it's a pretty UI based func, but it is implemented in this file that doesn't strictly feel tied to UI
 // todo: maybe make this function take an enum to designate which file type we're saving to?
 // todo: this would be a good function to implement some tests for practice
 pub fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
