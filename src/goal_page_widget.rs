@@ -20,6 +20,7 @@ impl GoalPageWidget {
     pub fn update(&mut self, message: Message) {
         match message {
             Message::LoadGoalsPressed => {
+                // todo: should these be merged with the currently loaded goals?
                 if goals::load_goals(&mut self.goals).is_ok() {
                     for goal in self.goals.iter() {
                         self.goal_entries
@@ -40,5 +41,12 @@ impl GoalPageWidget {
         }
 
         content.into()
+    }
+
+    pub fn add_goal(&mut self, new_goal: goals::Goal) {
+        // todo: reference here?
+        self.goal_entries
+            .push(goal_widget::GoalWidget::new(new_goal.clone())); // todo: so many clones. id rather avoid it when i can
+        self.goals.push(new_goal);
     }
 }

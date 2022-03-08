@@ -4,6 +4,7 @@ use iced::{button, Button, Column, Command, Container, Element, Row, Text};
 
 use crate::common_enums::{ApplicationPage, Message};
 use crate::edit_goal_widget;
+use crate::goals;
 
 pub struct CreateNewGoalPage {
     confirm_create_goal_button_state: button::State,
@@ -23,9 +24,21 @@ impl CreateNewGoalPage {
     pub fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::CreateGoalPageCancelPressed => Command::perform(
+                // todo: reset edit goal widget state
                 future::ready(()), // can't find a way to send a message without a future involved
                 |_| Message::ChangePage(ApplicationPage::HomePage),
             ),
+            Message::CreateGoalPageCreateGoalPressed => {
+                let new_goal: goals::Goal = self.edit_goal_widget.get_goal();
+                let add_goal_command = Command::perform(future::ready(()), move |_| {
+                    Message::NewGoalCreated(new_goal.clone())
+                });
+
+                let change_command = Command::perform(future::ready(()), |_| {
+                    Message::ChangePage(ApplicationPage::HomePage)
+                });
+                Command::batch(vec![add_goal_command, change_command])
+            }
             _ => self.edit_goal_widget.update(message),
         }
     }

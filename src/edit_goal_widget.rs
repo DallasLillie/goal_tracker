@@ -1,6 +1,10 @@
+use std::convert::TryInto;
+
+use chrono::NaiveDate;
 use iced::{
     pick_list, text_input, Checkbox, Column, Command, Element, PickList, Row, Text, TextInput,
 };
+use uuid::Uuid;
 
 use crate::common_enums::Message;
 use crate::goals;
@@ -333,5 +337,48 @@ impl EditGoalWidget {
             .push(goal_status_content)
             .push(goal_notes_content)
             .into()
+    }
+
+    pub fn get_goal(&self) -> goals::Goal {
+        let goal = goals::Goal {
+            uuid: Uuid::new_v4(), // todo: sort of a weird concept that get_goal does the generation of the Uuid
+            text: self.goal_text_input_entry.clone(),
+            start_date: NaiveDate::from_ymd(
+                self.start_date_selected_year.unwrap().into(),
+                self.start_date_selected_month.unwrap().try_into().unwrap(), // todo: not really sure what this is about but rust recommended it
+                self.start_date_selected_day.unwrap().try_into().unwrap(),
+            ),
+            due_date: NaiveDate::from_ymd(
+                self.end_date_selected_year.unwrap().into(),
+                self.end_date_selected_month.unwrap().try_into().unwrap(),
+                self.end_date_selected_day.unwrap().try_into().unwrap(),
+            ),
+            priority: self.selected_priority.unwrap_or_default(),
+            smart_flags: goals::GoalSmartFlags::empty(),
+            progress_type: match self.selected_progress_type {
+                Some(progress_type) => match progress_type {
+                    goals::GoalProgressType::DoneOrNot(_) => {
+                        // todo: would be nice if this actually had the data in it
+                        goals::GoalProgressType::DoneOrNot(self.done_or_not_checkbox_checked)
+                    }
+                    goals::GoalProgressType::DoXManyTimes(_) => {
+                        // todo: need some kind validation on the input
+                        goals::GoalProgressType::DoXManyTimes((
+                            self.do_x_many_times_current_progress_text_input_entry
+                                .parse::<u16>()
+                                .unwrap(),
+                            self.do_x_many_times_required_completion_text_input_entry
+                                .parse::<u8>()
+                                .unwrap(),
+                        ))
+                    }
+                },
+                None => goals::GoalProgressType::DoneOrNot(false),
+            },
+            status: self.selected_status.unwrap_or_default(),
+            notes: self.notes_text_input_entry.clone(),
+            parent: None,
+        };
+        return goal;
     }
 }

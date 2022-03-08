@@ -11,6 +11,7 @@ pub enum Message {
     ChangePage(ApplicationPage),
     CreateGoalPageCreateGoalPressed, // todo: kind of annoying tracking every button pressed message for the whole program in this one message enum
     CreateGoalPageCancelPressed,
+    NewGoalCreated(goals::Goal),
     EditGoalWidgetGoalPriorityPicked(goals::GoalPriority),
     EditGoalWidgetGoalStatusPicked(goals::GoalStatus),
     EditGoalWidgetGoalProgressTypePicked(goals::GoalProgressType),

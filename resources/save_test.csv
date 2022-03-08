@@ -1,6 +1,2 @@
-uuid,text,period,priority,smart_flags,status,notes,parent
-f868bf01-c14b-4840-a9f1-da2f8f9c86c4,g1,Day,Top,31,InProgress,,2ab6c73f-8aaa-4b68-afd2-564226f39f34
-b566a948-2266-4fe1-a55d-55dee6771fe6,g2,Year,High,3,Failed,not empty,
-213492fe-552d-4850-9a1c-c367b02d6135,g3,Month,Middle,12,Retired,"comma, perhaps",b566a948-2266-4fe1-a55d-55dee6771fe6
-2ab6c73f-8aaa-4b68-afd2-564226f39f34,g4,Week,Low,0,Successful,"quotes ""perhaps""",213492fe-552d-4850-9a1c-c367b02d6135
-74aeac8f-519d-4fb4-acea-446bb855e64b,g5,Day,Bottom,31,InProgress,i have notes here,2ab6c73f-8aaa-4b68-afd2-564226f39f34
+uuid,text,start_date,due_date,priority,smart_flags,progress_type,status,notes,parent
+b3091089-32e1-4371-891f-c7ca613a4f86,new,2022-03-03,2022-03-10,Middle,0,false,InProgress,notes,

@@ -124,7 +124,7 @@ impl<'de> Deserialize<'de> for GoalSmartFlags {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Goal {
     // todo: im curious about the size of the struct
-    uuid: Uuid,
+    pub uuid: Uuid, // todo: this probably shouldn't be public
     pub text: String,
     pub start_date: NaiveDate,
     pub due_date: NaiveDate,
@@ -133,7 +133,7 @@ pub struct Goal {
     pub progress_type: GoalProgressType,
     pub status: GoalStatus,
     pub notes: String,
-    parent: Option<Uuid>,
+    pub parent: Option<Uuid>,
 }
 
 // todo: this function feels weird here. it's a pretty UI based func, but it is implemented in this file that doesn't strictly feel tied to UI

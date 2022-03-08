@@ -37,6 +37,10 @@ impl Application for MyApp {
                 self.current_page = new_page;
                 Command::none()
             }
+            Message::NewGoalCreated(new_goal) => {
+                self.goal_page.add_goal(new_goal);
+                Command::none()
+            }
             _ => match self.current_page {
                 ApplicationPage::HomePage => {
                     let cloned_message = message.clone(); // todo: cloning here seems like it could lead down a bad path in the long run
