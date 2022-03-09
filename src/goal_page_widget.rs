@@ -21,12 +21,11 @@ impl GoalPageWidget {
         match message {
             Message::LoadGoalsPressed => {
                 // todo: should these be merged with the currently loaded goals?
-                if goals::load_goals(&mut self.goals).is_ok() {
-                    for goal in self.goals.iter() {
-                        self.goal_entries
-                            .push(goal_widget::GoalWidget::new(goals::Goal::clone(&goal)));
-                    }
-                } // todo: handle is_err()
+                goals::load_goals(&mut self.goals).unwrap();
+                for goal in self.goals.iter() {
+                    self.goal_entries
+                        .push(goal_widget::GoalWidget::new(goals::Goal::clone(&goal)));
+                }
             }
             Message::SaveGoalsPressed => if goals::save_goals(&self.goals).is_ok() {}, // todo: respond if is_ok/is_err
             _ => {}

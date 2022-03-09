@@ -159,7 +159,7 @@ pub fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn load_goals(goals: &mut Vec<Goal>) -> Result<(), Box<dyn Error>> {
-    let file_path = "..\\resources\\load_test.csv";
+    let file_path = "..\\resources\\save_test.csv";
     let mut reader = csv::Reader::from_path(file_path)?;
     for result in reader.deserialize() {
         let goal: Goal = result?;
