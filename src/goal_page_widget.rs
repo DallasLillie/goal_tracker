@@ -21,6 +21,7 @@ impl GoalPageWidget {
         match message {
             Message::LoadGoalsPressed => {
                 // todo: should these be merged with the currently loaded goals?
+                // todo: would like a messagebox here on DeserializeError rather than panicing and crashing the program
                 goals::load_goals(&mut self.goals).unwrap();
                 for goal in self.goals.iter() {
                     self.goal_entries

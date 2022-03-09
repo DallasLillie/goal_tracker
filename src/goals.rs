@@ -9,7 +9,7 @@ use uuid::Uuid;
 
 extern crate serde;
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GoalProgressType {
     DoneOrNot(bool),
     DoXManyTimes(
@@ -18,6 +18,57 @@ pub enum GoalProgressType {
             u8,  // required_completion_percentage, 0-100
         ),
     ),
+}
+
+impl Serialize for GoalProgressType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            GoalProgressType::DoneOrNot(is_done) => {
+                let progress_type = 0; // first byte
+                let is_done = *is_done as u32; // second/third/fourth bytes
+                let packed_data: u32 = progress_type | (is_done << 8);
+                serializer.serialize_u32(packed_data)
+            }
+            GoalProgressType::DoXManyTimes(progress_and_completion) => {
+                let progress_type = 1; // first byte
+                let progress = progress_and_completion.0 as u32; // second and third byte
+                let completion = progress_and_completion.1 as u32; // fourth byte
+                let packed_data: u32 = progress_type | (progress << 8) | (completion << 24);
+                serializer.serialize_u32(packed_data)
+            }
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for GoalProgressType {
+    fn deserialize<D>(deserializer: D) -> Result<GoalProgressType, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let packed_data = u32::deserialize(deserializer)?;
+        let progress_type = packed_data & 0xFF;
+        match progress_type {
+            0 => {
+                let is_done = (packed_data & 0xFF00) >> 8;
+                Ok(GoalProgressType::DoneOrNot(is_done != 0))
+            }
+            1 => {
+                let progress = (packed_data & 0xFFFF00) >> 8;
+                let completion = (packed_data & 0xFF000000) >> 24;
+                Ok(GoalProgressType::DoXManyTimes((
+                    progress as u16,
+                    completion as u8,
+                )))
+            }
+            _ => Err(serde::de::Error::custom(format!(
+                "Couldn't deserialize Goal Progress Type: {}",
+                packed_data
+            ))),
+        }
+    }
 }
 
 impl fmt::Display for GoalProgressType {
@@ -159,7 +210,7 @@ pub fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn load_goals(goals: &mut Vec<Goal>) -> Result<(), Box<dyn Error>> {
-    let file_path = "..\\resources\\save_test.csv";
+    let file_path = "..\\resources\\load_test.csv";
     let mut reader = csv::Reader::from_path(file_path)?;
     for result in reader.deserialize() {
         let goal: Goal = result?;
