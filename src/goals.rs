@@ -20,6 +20,12 @@ pub enum GoalProgressType {
     ),
 }
 
+impl Default for GoalProgressType {
+    fn default() -> GoalProgressType {
+        GoalProgressType::DoneOrNot(false)
+    }
+}
+
 impl Serialize for GoalProgressType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

@@ -1,6 +1,6 @@
 use std::convert::TryInto;
 
-use chrono::NaiveDate;
+use chrono::{Datelike, Local, NaiveDate};
 use iced::{
     pick_list, text_input, Checkbox, Column, Command, Element, PickList, Row, Text, TextInput,
 };
@@ -34,9 +34,7 @@ impl goals::GoalProgressType {
         goals::GoalProgressType::DoXManyTimes((0, 0)),
     ];
 }
-#[derive(Default)]
 pub struct EditGoalWidget {
-    // todo: really need these to default to something that actually shows up in the gui
     // goal text
     goal_text_input_state: text_input::State,
     goal_text_input_entry: String,
@@ -85,6 +83,53 @@ pub struct EditGoalWidget {
     notes_text_input_state: text_input::State,
     notes_text_input_entry: String,
     // todo: parent goal
+}
+
+impl Default for EditGoalWidget {
+    fn default() -> EditGoalWidget {
+        let today = Local::today();
+        EditGoalWidget {
+            goal_text_input_state: text_input::State::new(),
+            goal_text_input_entry: "".to_owned(),
+            // start date
+            start_date_month_pick_list_state: pick_list::State::default(),
+            start_date_selected_month: Some(today.naive_local().month().try_into().unwrap()),
+            start_date_day_pick_list_state: pick_list::State::default(),
+            start_date_selected_day: Some(today.naive_local().day().try_into().unwrap()),
+            start_date_year_pick_list_state: pick_list::State::default(),
+            start_date_selected_year: Some(today.naive_local().year().try_into().unwrap()),
+            // end date
+            end_date_month_pick_list_state: pick_list::State::default(),
+            end_date_selected_month: Some(today.naive_local().month().try_into().unwrap()),
+            end_date_day_pick_list_state: pick_list::State::default(),
+            end_date_selected_day: Some(today.naive_local().day().try_into().unwrap()),
+            end_date_year_pick_list_state: pick_list::State::default(),
+            end_date_selected_year: Some(today.naive_local().year().try_into().unwrap()),
+            // GoalPriority
+            priority_pick_list_state: pick_list::State::default(),
+            selected_priority: Some(goals::GoalPriority::default()),
+            // GoalSmartFlags
+            specific_checkbox_is_checked: true,
+            measurable_checkbox_is_checked: true,
+            achievable_checkbox_is_checked: true,
+            relevant_checkbox_is_checked: true,
+            timebound_checkbox_is_checked: true,
+            // GoalProgressType
+            progress_type_pick_list_state: pick_list::State::default(),
+            selected_progress_type: Some(goals::GoalProgressType::default()),
+            done_or_not_checkbox_checked: true,
+            do_x_many_times_current_progress_text_input_state: text_input::State::new(),
+            do_x_many_times_current_progress_text_input_entry: "".to_owned(),
+            do_x_many_times_required_completion_text_input_state: text_input::State::new(),
+            do_x_many_times_required_completion_text_input_entry: "".to_owned(),
+            // GoalStatus
+            status_pick_list_state: pick_list::State::default(),
+            selected_status: Some(goals::GoalStatus::default()),
+            // notes text
+            notes_text_input_state: text_input::State::new(),
+            notes_text_input_entry: "".to_owned(),
+        }
+    }
 }
 
 impl EditGoalWidget {
@@ -176,6 +221,8 @@ impl EditGoalWidget {
         }
     }
 
+    // todo: would be nice to have the goal text widget auto-focused when opening create new goal page
+    // todo: tab should navigate each widget
     pub fn view(&mut self) -> Element<Message> {
         let goal_text_content = Row::new().push(Text::new("Goal: ")).push(TextInput::new(
             &mut self.goal_text_input_state,
