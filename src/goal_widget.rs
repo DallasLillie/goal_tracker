@@ -1,11 +1,14 @@
-use iced::{Color, Container, Element, Font, Row, Text};
+use std::future;
 
-use crate::common_enums::Message;
+use iced::{button, Button, Color, Command, Container, Element, Font, Row, Text};
+
+use crate::common_enums::{ApplicationPage, Message};
 use crate::goals;
 
 pub struct GoalWidget {
     goal: goals::Goal,
     text_color: iced::Color,
+    edit_goal_button_state: button::State,
 }
 
 const CALIBRI_FONT: Font = Font::External {
@@ -18,6 +21,29 @@ impl GoalWidget {
         GoalWidget {
             goal: new_goal,
             text_color: Color::from_rgb8(100, 149, 237),
+            edit_goal_button_state: button::State::new(),
+        }
+    }
+
+    pub fn update(&mut self, message: Message) -> Command<Message> {
+        match message {
+            Message::EditGoalPressed(goal_uuid) => {
+                if goal_uuid == self.goal.uuid {
+                    let edit_goal = self.goal.clone(); // todo: what the heck is going on here.
+                    Command::perform(future::ready(()), move |_| {
+                        Message::ChangePage(ApplicationPage::EditGoalPage(edit_goal.clone()))
+                    })
+                } else {
+                    Command::none()
+                }
+            }
+            Message::GoalEdited(edited_goal) => {
+                if edited_goal.uuid == self.goal.uuid {
+                    self.goal = edited_goal;
+                }
+                Command::none()
+            }
+            _ => Command::none(),
         }
     }
 
@@ -25,6 +51,10 @@ impl GoalWidget {
         Container::new(
             Row::new()
                 .spacing(10)
+                .push(
+                    Button::new(&mut self.edit_goal_button_state, Text::new("Edit"))
+                        .on_press(Message::EditGoalPressed(self.goal.uuid)),
+                )
                 .push(
                     Text::new(self.goal.text.to_string())
                         .size(28)

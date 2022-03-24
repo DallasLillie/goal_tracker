@@ -1,4 +1,4 @@
-use iced::{Column, Element};
+use iced::{Column, Command, Element};
 
 use crate::common_enums::Message;
 use crate::goal_widget;
@@ -17,7 +17,7 @@ impl GoalPageWidget {
         }
     }
 
-    pub fn update(&mut self, message: Message) {
+    pub fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::LoadGoalsPressed => {
                 self.goals.clear();
@@ -29,9 +29,30 @@ impl GoalPageWidget {
                     self.goal_entries
                         .push(goal_widget::GoalWidget::new(goals::Goal::clone(&goal)));
                 }
+                Command::none()
             }
-            Message::SaveGoalsPressed => if goals::save_goals(&self.goals).is_ok() {}, // todo: respond if is_ok/is_err
-            _ => {}
+            Message::SaveGoalsPressed => {
+                if goals::save_goals(&self.goals).is_ok() {} // todo: respond if is_ok/is_err
+                Command::none()
+            }
+            Message::GoalEdited(edited_goal) => {
+                let to_clone_message = Message::GoalEdited(edited_goal.clone()); // todo: another spot where clones are getting out of hand
+                self.update_goal(edited_goal);
+                let mut commands = Vec::new();
+                for goal_entry in self.goal_entries.iter_mut() {
+                    let cloned_message = to_clone_message.clone();
+                    commands.push(goal_entry.update(cloned_message));
+                }
+                Command::batch(commands)
+            }
+            _ => {
+                let mut commands = Vec::new();
+                for goal_entry in self.goal_entries.iter_mut() {
+                    let cloned_message = message.clone();
+                    commands.push(goal_entry.update(cloned_message));
+                }
+                Command::batch(commands)
+            }
         }
     }
 
@@ -50,5 +71,14 @@ impl GoalPageWidget {
         self.goal_entries
             .push(goal_widget::GoalWidget::new(new_goal.clone())); // todo: so many clones. id rather avoid it when i can
         self.goals.push(new_goal);
+    }
+
+    pub fn update_goal(&mut self, updated_goal: goals::Goal) {
+        for goal in self.goals.iter_mut() {
+            if goal.uuid == updated_goal.uuid {
+                *goal = updated_goal;
+                break;
+            }
+        }
     }
 }

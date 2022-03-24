@@ -35,6 +35,8 @@ impl goals::GoalProgressType {
     ];
 }
 pub struct EditGoalWidget {
+    goal_uuid: Uuid,
+
     // goal text
     goal_text_input_state: text_input::State,
     goal_text_input_entry: String,
@@ -89,6 +91,7 @@ impl Default for EditGoalWidget {
     fn default() -> EditGoalWidget {
         let today = Local::today();
         EditGoalWidget {
+            goal_uuid: Uuid::new_v4(),
             goal_text_input_state: text_input::State::new(),
             goal_text_input_entry: "".to_owned(),
             // start date
@@ -388,7 +391,7 @@ impl EditGoalWidget {
 
     pub fn get_goal(&self) -> goals::Goal {
         let goal = goals::Goal {
-            uuid: Uuid::new_v4(), // todo: sort of a weird concept that get_goal does the generation of the Uuid
+            uuid: self.goal_uuid,
             text: self.goal_text_input_entry.clone(),
             start_date: NaiveDate::from_ymd(
                 self.start_date_selected_year.unwrap().into(),
@@ -401,7 +404,7 @@ impl EditGoalWidget {
                 self.end_date_selected_day.unwrap().try_into().unwrap(),
             ),
             priority: self.selected_priority.unwrap_or_default(),
-            smart_flags: goals::GoalSmartFlags::empty(),
+            smart_flags: goals::GoalSmartFlags::empty(), // todo: this isn't getting the state of the checkboxes
             progress_type: match self.selected_progress_type {
                 Some(progress_type) => match progress_type {
                     goals::GoalProgressType::DoneOrNot(_) => {
@@ -427,5 +430,36 @@ impl EditGoalWidget {
             parent: None,
         };
         return goal;
+    }
+
+    pub fn set_goal(&mut self, goal: goals::Goal) {
+        self.goal_uuid = goal.uuid;
+        self.goal_text_input_entry = goal.text;
+        self.start_date_selected_day = Some(goal.start_date.day().try_into().unwrap());
+        self.start_date_selected_month = Some(goal.start_date.month().try_into().unwrap());
+        self.start_date_selected_year = Some(goal.start_date.year().try_into().unwrap());
+        self.end_date_selected_day = Some(goal.due_date.day().try_into().unwrap());
+        self.end_date_selected_month = Some(goal.due_date.month().try_into().unwrap());
+        self.end_date_selected_year = Some(goal.due_date.year().try_into().unwrap());
+        self.selected_priority = Some(goal.priority);
+        // smart_flags: goals::GoalSmartFlags::empty(),
+        match goal.progress_type {
+            goals::GoalProgressType::DoneOrNot(is_done) => {
+                self.done_or_not_checkbox_checked = is_done;
+            }
+            goals::GoalProgressType::DoXManyTimes((
+                current_progress,
+                required_completion_percentage,
+            )) => {
+                self.do_x_many_times_current_progress_text_input_entry =
+                    current_progress.to_string();
+                self.do_x_many_times_required_completion_text_input_entry =
+                    required_completion_percentage.to_string();
+            }
+        }
+        self.selected_progress_type = Some(goal.progress_type);
+        self.selected_status = Some(goal.status);
+        self.notes_text_input_entry = goal.notes;
+        // todo: parent
     }
 }

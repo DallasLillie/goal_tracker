@@ -1,5 +1,7 @@
 use crate::goals;
 
+use uuid::Uuid;
+
 #[derive(Debug, Clone)]
 pub enum Message {
     LoadGoalsPressed,
@@ -11,7 +13,11 @@ pub enum Message {
     ChangePage(ApplicationPage),
     CreateGoalPageCreateGoalPressed, // todo: kind of annoying tracking every button pressed message for the whole program in this one message enum
     CreateGoalPageCancelPressed,
+    EditGoalPressed(Uuid),
+    EditGoalPageCancelPressed,
+    EditGoalPageConfirmPressed,
     NewGoalCreated(goals::Goal),
+    GoalEdited(goals::Goal),
     EditGoalWidgetGoalPriorityPicked(goals::GoalPriority),
     EditGoalWidgetGoalStatusPicked(goals::GoalStatus),
     EditGoalWidgetGoalProgressTypePicked(goals::GoalProgressType),
@@ -33,8 +39,9 @@ pub enum Message {
     EditGoalWidgetEndDateYearPicked(i16),
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub enum ApplicationPage {
     HomePage,
     CreateGoalPage,
+    EditGoalPage(goals::Goal),
 }

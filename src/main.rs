@@ -4,6 +4,7 @@ use iced::{Application, Settings};
 mod application;
 mod common_enums;
 mod create_goal_page_widget;
+mod edit_goal_page_widget;
 mod edit_goal_widget;
 mod goal_page_widget;
 mod goal_widget;
