@@ -390,7 +390,7 @@ impl EditGoalWidget {
     }
 
     pub fn get_goal(&self) -> goals::Goal {
-        let goal = goals::Goal {
+        let mut goal = goals::Goal {
             uuid: self.goal_uuid,
             text: self.goal_text_input_entry.clone(),
             start_date: NaiveDate::from_ymd(
@@ -404,7 +404,7 @@ impl EditGoalWidget {
                 self.end_date_selected_day.unwrap().try_into().unwrap(),
             ),
             priority: self.selected_priority.unwrap_or_default(),
-            smart_flags: goals::GoalSmartFlags::empty(), // todo: this isn't getting the state of the checkboxes
+            smart_flags: goals::GoalSmartFlags::empty(),
             progress_type: match self.selected_progress_type {
                 Some(progress_type) => match progress_type {
                     goals::GoalProgressType::DoneOrNot(_) => {
@@ -429,6 +429,28 @@ impl EditGoalWidget {
             notes: self.notes_text_input_entry.clone(),
             parent: None,
         };
+
+        goal.smart_flags.set(
+            goals::GoalSmartFlags::SPECIFIC,
+            self.specific_checkbox_is_checked,
+        );
+        goal.smart_flags.set(
+            goals::GoalSmartFlags::MEASURABLE,
+            self.measurable_checkbox_is_checked,
+        );
+        goal.smart_flags.set(
+            goals::GoalSmartFlags::ACHIEVABLE,
+            self.achievable_checkbox_is_checked,
+        );
+        goal.smart_flags.set(
+            goals::GoalSmartFlags::RELEVANT,
+            self.relevant_checkbox_is_checked,
+        );
+        goal.smart_flags.set(
+            goals::GoalSmartFlags::TIME_BOUND,
+            self.timebound_checkbox_is_checked,
+        );
+
         return goal;
     }
 
@@ -442,7 +464,18 @@ impl EditGoalWidget {
         self.end_date_selected_month = Some(goal.due_date.month().try_into().unwrap());
         self.end_date_selected_year = Some(goal.due_date.year().try_into().unwrap());
         self.selected_priority = Some(goal.priority);
-        // smart_flags: goals::GoalSmartFlags::empty(),
+
+        self.specific_checkbox_is_checked =
+            goal.smart_flags.contains(goals::GoalSmartFlags::SPECIFIC);
+        self.measurable_checkbox_is_checked =
+            goal.smart_flags.contains(goals::GoalSmartFlags::MEASURABLE);
+        self.achievable_checkbox_is_checked =
+            goal.smart_flags.contains(goals::GoalSmartFlags::ACHIEVABLE);
+        self.relevant_checkbox_is_checked =
+            goal.smart_flags.contains(goals::GoalSmartFlags::RELEVANT);
+        self.timebound_checkbox_is_checked =
+            goal.smart_flags.contains(goals::GoalSmartFlags::TIME_BOUND);
+
         match goal.progress_type {
             goals::GoalProgressType::DoneOrNot(is_done) => {
                 self.done_or_not_checkbox_checked = is_done;
