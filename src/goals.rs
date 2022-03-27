@@ -196,11 +196,7 @@ pub struct Goal {
 // todo: this function feels weird here. it's a pretty UI based func, but it is implemented in this file that doesn't strictly feel tied to UI
 // todo: maybe make this function take an enum to designate which file type we're saving to?
 // todo: this would be a good function to implement some tests for practice
-pub fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
-    // todo: environment variable for an abs path?
-    // todo: some kind of switch to enable debug mode that uses this?
-    let file_path = "..\\resources\\save_test.csv";
-
+pub fn save_goals(file_path: &str, goals: &[Goal]) -> Result<(), Box<dyn Error>> {
     // todo: the docs for the csv crate say this:
     // "Note that we do not wrap the File in a buffer. The CSV reader does buffering internally,
     // so there's no need for the caller to do it"
@@ -215,8 +211,7 @@ pub fn save_goals(goals: &[Goal]) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn load_goals(goals: &mut Vec<Goal>) -> Result<(), Box<dyn Error>> {
-    let file_path = "..\\resources\\load_test.csv";
+pub fn load_goals(file_path: &str, goals: &mut Vec<Goal>) -> Result<(), Box<dyn Error>> {
     let mut reader = csv::Reader::from_path(file_path)?;
     for result in reader.deserialize() {
         let goal: Goal = result?;

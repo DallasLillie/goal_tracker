@@ -12,6 +12,7 @@ mod goals;
 mod tool_bar_widget;
 
 extern crate csv;
+extern crate nfd;
 // this has to be in the crate root according to Rust's rules
 #[macro_use]
 extern crate serde_derive;

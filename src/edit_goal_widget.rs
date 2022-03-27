@@ -138,8 +138,6 @@ impl Default for EditGoalWidget {
 impl EditGoalWidget {
     pub fn new() -> Self {
         Self::default()
-        // todo: this widget's state is kept around when going back to the home page of the application. it needs to get reset
-        // todo: should take an optional goal for editing, if no goal, then it creates a default
     }
 
     pub fn update(&mut self, message: Message) -> Command<Message> {
