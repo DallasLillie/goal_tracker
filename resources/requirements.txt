@@ -1,0 +1,36 @@
+Application
+- Delete Goal button on goal page
+- Parent Goal option on Edit goal widget
+- Load Goal File on startup through commandline argument
+- Goal Categories
+- Visualization for when a goal is complete or not
+- Visualization for the priority of a goal
+- Grade Visualization
+- Points calculation
+- Points Visualization
+
+Yearly Review
+- Goal page layout
+
+Monthly Review
+- Goal page layout
+
+Weekly Review
+- Goal page layout
+
+Daily Review
+- button on main page
+- goal presentation
+- goal achieved question?
+- Yes button
+- No button
+- End button
+- Back button
+
+
+Stretch Goals:
+- most of the todos
+- database
+- streamline goal creation
+- edit goal inline
+- prettify the whole thing
