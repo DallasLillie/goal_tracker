@@ -1,5 +1,4 @@
 Application
-- Delete Goal button on goal page
 - Parent Goal option on Edit goal widget
 - Load Goal File on startup through commandline argument
 - Goal Categories

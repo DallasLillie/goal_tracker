@@ -61,6 +61,12 @@ impl GoalPageWidget {
                 }
                 Command::batch(commands)
             }
+            Message::DeleteGoalPressed(goal_uuid_to_delete) => {
+                self.goal_entries
+                    .retain(|goal_entry| goal_entry.get_uuid() != goal_uuid_to_delete);
+                self.goals.retain(|goal| goal.uuid != goal_uuid_to_delete);
+                Command::none()
+            }
             _ => {
                 let mut commands = Vec::new();
                 for goal_entry in self.goal_entries.iter_mut() {

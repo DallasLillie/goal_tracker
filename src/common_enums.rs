@@ -14,6 +14,7 @@ pub enum Message {
     CreateGoalPageCreateGoalPressed, // todo: kind of annoying tracking every button pressed message for the whole program in this one message enum
     CreateGoalPageCancelPressed,
     EditGoalPressed(Uuid),
+    DeleteGoalPressed(Uuid),
     EditGoalPageCancelPressed,
     EditGoalPageConfirmPressed,
     NewGoalCreated(goals::Goal),

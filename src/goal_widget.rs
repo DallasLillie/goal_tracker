@@ -9,6 +9,7 @@ pub struct GoalWidget {
     goal: goals::Goal,
     text_color: iced::Color,
     edit_goal_button_state: button::State,
+    delete_goal_button_state: button::State,
 }
 
 const CALIBRI_FONT: Font = Font::External {
@@ -22,6 +23,7 @@ impl GoalWidget {
             goal: new_goal,
             text_color: Color::from_rgb8(100, 149, 237),
             edit_goal_button_state: button::State::new(),
+            delete_goal_button_state: button::State::new(),
         }
     }
 
@@ -54,6 +56,10 @@ impl GoalWidget {
                 .push(
                     Button::new(&mut self.edit_goal_button_state, Text::new("Edit"))
                         .on_press(Message::EditGoalPressed(self.goal.uuid)),
+                )
+                .push(
+                    Button::new(&mut self.delete_goal_button_state, Text::new("Delete"))
+                        .on_press(Message::DeleteGoalPressed(self.goal.uuid)),
                 )
                 .push(
                     Text::new(self.goal.text.to_string())
@@ -105,5 +111,9 @@ impl GoalWidget {
                 ),
         )
         .into()
+    }
+
+    pub fn get_uuid(&self) -> uuid::Uuid {
+        self.goal.uuid
     }
 }
