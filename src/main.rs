@@ -20,19 +20,22 @@ extern crate serde_derive;
 
 #[derive(Parser, Debug)]
 pub struct ApplicationArgs {
-    #[clap(default_value_t = String::from("..\\resources\\load_test.csv"))]
-    goals_file: String,
+    goals_file: Option<String>,
 }
 
 pub fn main() -> iced::Result {
     let args = ApplicationArgs::parse();
 
-    let relative_path = std::path::PathBuf::from(args.goals_file);
-    let mut absolute_path = std::env::current_dir().unwrap();
-    absolute_path.push(relative_path);
-
     let settings = Settings::with_flags(common_enums::ApplicationFlags {
-        startup_goals_file_path: Some(absolute_path.into_os_string().into_string().unwrap()),
+        startup_goals_file_path: match args.goals_file {
+            Some(file_path) => {
+                let relative_path = std::path::PathBuf::from(file_path);
+                let mut absolute_path = std::env::current_dir().unwrap();
+                absolute_path.push(relative_path);
+                Some(absolute_path.into_os_string().into_string().unwrap())
+            }
+            None => None,
+        },
     });
     application::MyApp::run(settings)
 }
