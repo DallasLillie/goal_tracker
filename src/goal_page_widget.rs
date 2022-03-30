@@ -19,36 +19,20 @@ impl GoalPageWidget {
 
     pub fn update(&mut self, message: Message) -> Command<Message> {
         match message {
-            Message::LoadGoalsPressed => {
-                let relative_path = Some("resources");
-                let result = nfd::open_file_dialog(None, relative_path) // must use backslashes
-                    .unwrap(); // todo: what errors are hidden here?
-                match result {
-                    nfd::Response::Okay(file_path) => {
-                        self.goals.clear();
-                        self.goal_entries.clear();
-                        // todo: would like a messagebox here on DeserializeError rather than panicing and crashing the program
-                        goals::load_goals(&file_path, &mut self.goals).unwrap();
-                        for goal in self.goals.iter() {
-                            self.goal_entries
-                                .push(goal_widget::GoalWidget::new(goals::Goal::clone(&goal)));
-                        }
-                    }
-                    _ => {}
+            Message::LoadGoals(file_path) => {
+                self.goals.clear();
+                self.goal_entries.clear();
+                // todo: would like a messagebox here on DeserializeError rather than panicing and crashing the program
+                goals::load_goals(&file_path, &mut self.goals).unwrap();
+                for goal in self.goals.iter() {
+                    self.goal_entries
+                        .push(goal_widget::GoalWidget::new(goals::Goal::clone(&goal)));
                 }
                 Command::none()
             }
-            Message::SaveGoalsPressed => {
-                let relative_path = Some("resources");
-                let result = nfd::open_save_dialog(None, relative_path).unwrap();
-
-                match result {
-                    nfd::Response::Okay(file_path) => {
-                        if goals::save_goals(&file_path, &self.goals).is_ok() {}
-                        // todo: respond if is_ok/is_err
-                    }
-                    _ => {}
-                }
+            Message::SaveGoals(file_path) => {
+                // todo: respond if is_ok/is_err
+                if goals::save_goals(&file_path, &self.goals).is_ok() {}
                 Command::none()
             }
             Message::GoalEdited(edited_goal) => {

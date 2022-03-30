@@ -1,9 +1,11 @@
-use crate::goals;
-
 use uuid::Uuid;
+
+use crate::goals;
 
 #[derive(Debug, Clone)]
 pub enum Message {
+    LoadGoals(String),
+    SaveGoals(String),
     LoadGoalsPressed,
     SaveGoalsPressed,
     CreateGoalPressed,
@@ -45,4 +47,8 @@ pub enum ApplicationPage {
     HomePage,
     CreateGoalPage,
     EditGoalPage(goals::Goal),
+}
+
+pub struct ApplicationFlags {
+    pub startup_goals_file_path: Option<String>,
 }

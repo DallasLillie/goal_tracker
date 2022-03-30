@@ -1,3 +1,4 @@
+use clap::Parser;
 use iced::{Application, Settings};
 
 // todo: are these supposed to be included here?
@@ -17,6 +18,21 @@ extern crate nfd;
 #[macro_use]
 extern crate serde_derive;
 
+#[derive(Parser, Debug)]
+pub struct ApplicationArgs {
+    #[clap(default_value_t = String::from("..\\resources\\load_test.csv"))]
+    goals_file: String,
+}
+
 pub fn main() -> iced::Result {
-    application::MyApp::run(Settings::default())
+    let args = ApplicationArgs::parse();
+
+    let relative_path = std::path::PathBuf::from(args.goals_file);
+    let mut absolute_path = std::env::current_dir().unwrap();
+    absolute_path.push(relative_path);
+
+    let settings = Settings::with_flags(common_enums::ApplicationFlags {
+        startup_goals_file_path: Some(absolute_path.into_os_string().into_string().unwrap()),
+    });
+    application::MyApp::run(settings)
 }

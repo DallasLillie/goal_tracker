@@ -36,6 +36,30 @@ impl ToolBarWidget {
                 future::ready(()), // can't find a way to send a message without a future involved
                 |_| Message::ChangePage(ApplicationPage::CreateGoalPage),
             ),
+            Message::LoadGoalsPressed => {
+                let relative_path = Some("resources");
+                let result = nfd::open_file_dialog(None, relative_path).unwrap(); // todo: what errors are hidden here?
+                match result {
+                    nfd::Response::Okay(file_path) => {
+                        Command::perform(future::ready(()), move |_| {
+                            Message::LoadGoals(file_path.to_owned())
+                        })
+                    }
+                    _ => Command::none(),
+                }
+            }
+            Message::SaveGoalsPressed => {
+                let relative_path = Some("resources");
+                let result = nfd::open_save_dialog(None, relative_path).unwrap();
+                match result {
+                    nfd::Response::Okay(file_path) => {
+                        Command::perform(future::ready(()), move |_| {
+                            Message::SaveGoals(file_path.to_owned())
+                        })
+                    }
+                    _ => Command::none(),
+                }
+            }
             _ => Command::none(),
         }
     }

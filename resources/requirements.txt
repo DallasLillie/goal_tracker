@@ -1,6 +1,5 @@
 Application
 - Parent Goal option on Edit goal widget
-- Load Goal File on startup through commandline argument
 - Goal Categories
 - Visualization for when a goal is complete or not
 - Visualization for the priority of a goal

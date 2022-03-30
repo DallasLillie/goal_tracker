@@ -1,6 +1,8 @@
+use std::future;
+
 use iced::{executor, Application, Clipboard, Column, Command, Container, Element, Text};
 
-use crate::common_enums::{ApplicationPage, Message};
+use crate::common_enums::{ApplicationFlags, ApplicationPage, Message};
 use crate::{create_goal_page_widget, edit_goal_page_widget, goal_page_widget, tool_bar_widget};
 
 pub struct MyApp {
@@ -13,20 +15,24 @@ pub struct MyApp {
 
 impl Application for MyApp {
     type Message = Message;
-    type Flags = ();
+    type Flags = ApplicationFlags;
     type Executor = executor::Default;
 
-    fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
-        (
-            MyApp {
-                goal_page: goal_page_widget::GoalPageWidget::new(), // todo: should probably have a "home_page" that houses this stuff
-                tool_bar: tool_bar_widget::ToolBarWidget::new(),
-                current_page: ApplicationPage::HomePage,
-                create_new_goal_page: create_goal_page_widget::CreateNewGoalPage::new(),
-                edit_goal_page: edit_goal_page_widget::EditGoalPageWidget::new(),
-            },
-            Command::none(),
-        )
+    fn new(flags: Self::Flags) -> (Self, Command<Message>) {
+        let application = MyApp {
+            goal_page: goal_page_widget::GoalPageWidget::new(), // todo: should probably have a "home_page" that houses this stuff
+            tool_bar: tool_bar_widget::ToolBarWidget::new(),
+            current_page: ApplicationPage::HomePage,
+            create_new_goal_page: create_goal_page_widget::CreateNewGoalPage::new(),
+            edit_goal_page: edit_goal_page_widget::EditGoalPageWidget::new(),
+        };
+        let command = match flags.startup_goals_file_path {
+            Some(file_path) => Command::perform(future::ready(()), move |_| {
+                Message::LoadGoals(file_path.to_owned())
+            }),
+            None => Command::none(),
+        };
+        (application, command)
     }
 
     fn title(&self) -> String {
