@@ -68,6 +68,12 @@ impl GoalWidget {
                         .color(self.text_color),
                 )
                 .push(
+                    Text::new(self.goal.category.to_string())
+                        .size(28)
+                        .font(CALIBRI_FONT)
+                        .color(self.text_color),
+                )
+                .push(
                     Text::new(self.goal.start_date.to_string())
                         .size(28)
                         .font(CALIBRI_FONT)

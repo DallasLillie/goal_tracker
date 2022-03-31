@@ -9,6 +9,17 @@ use uuid::Uuid;
 use crate::common_enums::Message;
 use crate::goals;
 
+impl goals::GoalCategory {
+    const ALL: [goals::GoalCategory; 6] = [
+        goals::GoalCategory::Relationship,
+        goals::GoalCategory::SelfImprovement,
+        goals::GoalCategory::Health,
+        goals::GoalCategory::GameDevelopment,
+        goals::GoalCategory::ContentCreation,
+        goals::GoalCategory::Miscellaneous,
+    ];
+}
+
 impl goals::GoalPriority {
     const ALL: [goals::GoalPriority; 5] = [
         goals::GoalPriority::Top,
@@ -40,6 +51,10 @@ pub struct EditGoalWidget {
     // goal text
     goal_text_input_state: text_input::State,
     goal_text_input_entry: String,
+
+    // category
+    category_pick_list_state: pick_list::State<goals::GoalCategory>,
+    selected_category: Option<goals::GoalCategory>,
 
     // start date
     start_date_month_pick_list_state: pick_list::State<i8>,
@@ -94,6 +109,9 @@ impl Default for EditGoalWidget {
             goal_uuid: Uuid::new_v4(),
             goal_text_input_state: text_input::State::new(),
             goal_text_input_entry: "".to_owned(),
+            // category
+            category_pick_list_state: pick_list::State::default(),
+            selected_category: Some(goals::GoalCategory::default()),
             // start date
             start_date_month_pick_list_state: pick_list::State::default(),
             start_date_selected_month: Some(today.naive_local().month().try_into().unwrap()),
@@ -144,6 +162,10 @@ impl EditGoalWidget {
         match message {
             Message::EditGoalWidgetGoalEntryChanged(new_text) => {
                 self.goal_text_input_entry = new_text;
+                Command::none()
+            }
+            Message::EditGoalWidgetGoalCategoryPicked(category) => {
+                self.selected_category = Some(category);
                 Command::none()
             }
             Message::EditGoalWidgetStartDateMonthPicked(month) => {
@@ -230,6 +252,13 @@ impl EditGoalWidget {
             "What is the goal?",
             &self.goal_text_input_entry,
             Message::EditGoalWidgetGoalEntryChanged,
+        ));
+
+        let goal_category_content = Row::new().push(Text::new("Category: ")).push(PickList::new(
+            &mut self.category_pick_list_state,
+            &goals::GoalCategory::ALL[..],
+            self.selected_category,
+            Message::EditGoalWidgetGoalCategoryPicked,
         ));
 
         let start_date_content = Row::new()
@@ -377,6 +406,7 @@ impl EditGoalWidget {
 
         Column::new()
             .push(goal_text_content)
+            .push(goal_category_content)
             .push(start_date_content)
             .push(end_date_content)
             .push(goal_priority_content)
@@ -391,6 +421,7 @@ impl EditGoalWidget {
         let mut goal = goals::Goal {
             uuid: self.goal_uuid,
             text: self.goal_text_input_entry.clone(),
+            category: self.selected_category.unwrap_or_default(),
             start_date: NaiveDate::from_ymd(
                 self.start_date_selected_year.unwrap().into(),
                 self.start_date_selected_month.unwrap().try_into().unwrap(), // todo: not really sure what this is about but rust recommended it
@@ -455,6 +486,7 @@ impl EditGoalWidget {
     pub fn set_goal(&mut self, goal: goals::Goal) {
         self.goal_uuid = goal.uuid;
         self.goal_text_input_entry = goal.text;
+        self.selected_category = Some(goal.category);
         self.start_date_selected_day = Some(goal.start_date.day().try_into().unwrap());
         self.start_date_selected_month = Some(goal.start_date.month().try_into().unwrap());
         self.start_date_selected_year = Some(goal.start_date.year().try_into().unwrap());

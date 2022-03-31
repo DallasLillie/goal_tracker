@@ -1,3 +1,3 @@
-uuid,text,start_date,due_date,priority,smart_flags,progress_type,status,notes,parent
-04716b96-c932-4f45-9d07-ea0b93e94a5d,Goal 1,2022-03-09,2022-03-11,Middle,0,0,InProgress,please,
-df8ef350-8c41-4e2f-ab3c-3c7764d2e2ac,Goal 2,2022-03-09,2022-03-16,High,0,838861057,Retired,work,
+uuid,text,category,start_date,due_date,priority,smart_flags,progress_type,status,notes,parent
+61bdba01-5ddb-47ca-980e-11e4d9941d05,Goal 1,GameDevelopment,2022-03-31,2022-04-03,Middle,29,0,InProgress,the notes,
+ba9f247e-77a9-4ada-9480-a9165ccdc46e,Goal 2,SelfImprovement,2022-03-31,2022-03-31,Top,25,838860801,InProgress,more notes,

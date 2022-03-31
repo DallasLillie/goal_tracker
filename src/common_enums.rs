@@ -21,6 +21,7 @@ pub enum Message {
     EditGoalPageConfirmPressed,
     NewGoalCreated(goals::Goal),
     GoalEdited(goals::Goal),
+    EditGoalWidgetGoalCategoryPicked(goals::GoalCategory),
     EditGoalWidgetGoalPriorityPicked(goals::GoalPriority),
     EditGoalWidgetGoalStatusPicked(goals::GoalStatus),
     EditGoalWidgetGoalProgressTypePicked(goals::GoalProgressType),

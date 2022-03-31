@@ -138,6 +138,35 @@ impl fmt::Display for GoalPriority {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+pub enum GoalCategory {
+    Relationship,
+    SelfImprovement,
+    Health,
+    GameDevelopment,
+    ContentCreation,
+    Miscellaneous,
+}
+
+impl Default for GoalCategory {
+    fn default() -> GoalCategory {
+        GoalCategory::Miscellaneous
+    }
+}
+
+impl fmt::Display for GoalCategory {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            GoalCategory::Relationship => f.write_str("Relationship"),
+            GoalCategory::SelfImprovement => f.write_str("Self Improvement"),
+            GoalCategory::Health => f.write_str("Health"),
+            GoalCategory::GameDevelopment => f.write_str("Game Development"),
+            GoalCategory::ContentCreation => f.write_str("Content Creation"),
+            GoalCategory::Miscellaneous => f.write_str("Miscellaneous"),
+        }
+    }
+}
+
 bitflags! {
     pub struct GoalSmartFlags: u8 {
         const SPECIFIC      = 0b00000001;
@@ -183,6 +212,7 @@ pub struct Goal {
     // todo: im curious about the size of the struct
     pub uuid: Uuid, // todo: this probably shouldn't be public
     pub text: String,
+    pub category: GoalCategory,
     pub start_date: NaiveDate,
     pub due_date: NaiveDate,
     pub priority: GoalPriority,
