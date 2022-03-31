@@ -26,7 +26,7 @@ pub struct ApplicationArgs {
 pub fn main() -> iced::Result {
     let args = ApplicationArgs::parse();
 
-    let settings = Settings::with_flags(common_enums::ApplicationFlags {
+    let mut settings = Settings::with_flags(common_enums::ApplicationFlags {
         startup_goals_file_path: match args.goals_file {
             Some(file_path) => {
                 let relative_path = std::path::PathBuf::from(file_path);
@@ -37,5 +37,7 @@ pub fn main() -> iced::Result {
             None => None,
         },
     });
+    settings.default_font = Some(include_bytes!("C:/Windows/fonts/calibri.ttf"));
+    settings.default_text_size = 28;
     application::MyApp::run(settings)
 }
