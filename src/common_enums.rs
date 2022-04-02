@@ -41,6 +41,7 @@ pub enum Message {
     EditGoalWidgetEndDateMonthPicked(i8),
     EditGoalWidgetEndDateDayPicked(i8),
     EditGoalWidgetEndDateYearPicked(i16),
+    EditGoalWidgetGoalParentPicked(String),
 }
 
 #[derive(Debug, Clone)]

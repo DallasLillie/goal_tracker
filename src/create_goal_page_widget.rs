@@ -10,6 +10,7 @@ pub struct CreateNewGoalPage {
     confirm_create_goal_button_state: button::State,
     cancel_create_goal_button_state: button::State,
     edit_goal_widget: edit_goal_widget::EditGoalWidget,
+    goals: Vec<goals::Goal>,
 }
 
 impl CreateNewGoalPage {
@@ -18,6 +19,7 @@ impl CreateNewGoalPage {
             confirm_create_goal_button_state: button::State::new(),
             cancel_create_goal_button_state: button::State::new(),
             edit_goal_widget: edit_goal_widget::EditGoalWidget::new(),
+            goals: Vec::new(),
         }
     }
 
@@ -70,5 +72,10 @@ impl CreateNewGoalPage {
                     ),
             );
         Container::new(content).into()
+    }
+
+    pub fn set_goals(&mut self, goals: &Vec<goals::Goal>) {
+        self.goals = goals.to_vec();
+        self.edit_goal_widget.set_goals(goals);
     }
 }

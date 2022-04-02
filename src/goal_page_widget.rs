@@ -6,7 +6,7 @@ use crate::goals;
 
 pub struct GoalPageWidget {
     goal_entries: Vec<goal_widget::GoalWidget>,
-    goals: Vec<goals::Goal>,
+    pub goals: Vec<goals::Goal>,
 }
 
 impl GoalPageWidget {

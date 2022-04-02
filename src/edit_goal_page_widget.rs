@@ -10,6 +10,8 @@ pub struct EditGoalPageWidget {
     confirm_edit_goal_button_state: button::State,
     cancel_edit_goal_button_state: button::State,
     edit_goal_widget: edit_goal_widget::EditGoalWidget,
+
+    goals: Vec<goals::Goal>,
 }
 
 impl EditGoalPageWidget {
@@ -18,6 +20,7 @@ impl EditGoalPageWidget {
             confirm_edit_goal_button_state: button::State::new(),
             cancel_edit_goal_button_state: button::State::new(),
             edit_goal_widget: edit_goal_widget::EditGoalWidget::new(),
+            goals: Vec::new(),
         }
     }
 
@@ -69,6 +72,10 @@ impl EditGoalPageWidget {
     }
 
     pub fn set_goal(&mut self, goal: goals::Goal) {
-        self.edit_goal_widget.set_goal(goal);
+        self.edit_goal_widget.set_goal(goal, &self.goals);
+    }
+
+    pub fn set_goals(&mut self, goals: &Vec<goals::Goal>) {
+        self.goals = goals.to_vec();
     }
 }

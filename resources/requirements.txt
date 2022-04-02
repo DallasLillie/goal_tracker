@@ -1,6 +1,4 @@
 Application
-- Parent Goal option on Edit goal widget
-- Goal Categories
 - Visualization for when a goal is complete or not
 - Visualization for the priority of a goal
 - Grade Visualization

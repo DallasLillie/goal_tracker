@@ -45,7 +45,11 @@ impl Application for MyApp {
                 let cloned_page = new_page.clone(); // todo: so many bad clones. feels like a crutch
                 match new_page {
                     ApplicationPage::EditGoalPage(goal_to_edit) => {
+                        self.edit_goal_page.set_goals(&self.goal_page.goals);
                         self.edit_goal_page.set_goal(goal_to_edit);
+                    }
+                    ApplicationPage::CreateGoalPage => {
+                        self.create_new_goal_page.set_goals(&self.goal_page.goals);
                     }
                     _ => {}
                 }

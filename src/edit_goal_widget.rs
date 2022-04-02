@@ -99,7 +99,10 @@ pub struct EditGoalWidget {
     // notes text
     notes_text_input_state: text_input::State,
     notes_text_input_entry: String,
-    // todo: parent goal
+
+    goals: Vec<goals::Goal>,
+    goal_parent_pick_list_state: pick_list::State<String>,
+    selected_goal_parent: Option<String>,
 }
 
 impl Default for EditGoalWidget {
@@ -149,6 +152,10 @@ impl Default for EditGoalWidget {
             // notes text
             notes_text_input_state: text_input::State::new(),
             notes_text_input_entry: "".to_owned(),
+
+            goals: Vec::new(),
+            goal_parent_pick_list_state: pick_list::State::default(),
+            selected_goal_parent: None,
         }
     }
 }
@@ -238,6 +245,10 @@ impl EditGoalWidget {
             }
             Message::EditGoalWidgetNotesEntryChanged(new_text) => {
                 self.notes_text_input_entry = new_text;
+                Command::none()
+            }
+            Message::EditGoalWidgetGoalParentPicked(parent) => {
+                self.selected_goal_parent = Some(parent);
                 Command::none()
             }
             _ => Command::none(),
@@ -404,6 +415,14 @@ impl EditGoalWidget {
             Message::EditGoalWidgetNotesEntryChanged,
         ));
 
+        let goal_texts: Vec<String> = self.goals.iter().map(|goal| goal.text.to_owned()).collect();
+        let goal_parent_content = Row::new().push(Text::new("Parent: ")).push(PickList::new(
+            &mut self.goal_parent_pick_list_state,
+            goal_texts,
+            self.selected_goal_parent.to_owned(),
+            Message::EditGoalWidgetGoalParentPicked,
+        ));
+
         Column::new()
             .push(goal_text_content)
             .push(goal_category_content)
@@ -414,6 +433,7 @@ impl EditGoalWidget {
             .push(goal_progress_type_content)
             .push(goal_status_content)
             .push(goal_notes_content)
+            .push(goal_parent_content)
             .into()
     }
 
@@ -480,10 +500,21 @@ impl EditGoalWidget {
             self.timebound_checkbox_is_checked,
         );
 
+        for parent_goal in self.goals.iter() {
+            match &self.selected_goal_parent {
+                Some(goal_parent_text) => {
+                    if *goal_parent_text == parent_goal.text {
+                        goal.parent = Some(parent_goal.uuid);
+                    }
+                }
+                None => {}
+            }
+        }
+
         return goal;
     }
 
-    pub fn set_goal(&mut self, goal: goals::Goal) {
+    pub fn set_goal(&mut self, goal: goals::Goal, goals: &Vec<goals::Goal>) {
         self.goal_uuid = goal.uuid;
         self.goal_text_input_entry = goal.text;
         self.selected_category = Some(goal.category);
@@ -523,6 +554,24 @@ impl EditGoalWidget {
         self.selected_progress_type = Some(goal.progress_type);
         self.selected_status = Some(goal.status);
         self.notes_text_input_entry = goal.notes;
-        // todo: parent
+
+        self.goals = goals.to_vec();
+
+        self.selected_goal_parent = None; // todo: was getting an error when setting this to the match statement. not sure why
+        match goal.parent {
+            Some(parent_uuid) => {
+                for parent_goal in self.goals.iter() {
+                    if parent_uuid == parent_goal.uuid {
+                        self.selected_goal_parent = Some(parent_goal.text.clone());
+                        break;
+                    }
+                }
+            }
+            None => {}
+        };
+    }
+
+    pub fn set_goals(&mut self, goals: &Vec<goals::Goal>) {
+        self.goals = goals.to_vec();
     }
 }
