@@ -1,10 +1,11 @@
-use iced::{Column, Command, Element};
+use iced::{scrollable, Column, Command, Container, Element, Scrollable};
 
 use crate::common_enums::Message;
 use crate::goal_widget;
 use crate::goals;
 
 pub struct GoalPageWidget {
+    scroll: scrollable::State,
     goal_entries: Vec<goal_widget::GoalWidget>,
     pub goals: Vec<goals::Goal>,
 }
@@ -12,6 +13,7 @@ pub struct GoalPageWidget {
 impl GoalPageWidget {
     pub fn new() -> Self {
         GoalPageWidget {
+            scroll: scrollable::State::new(),
             goal_entries: Vec::new(),
             goals: Vec::new(), // todo: this is only necessary for how save is implemented right now. once save creates Goal structs based off the GoalWidgets, it can be removed
         }
@@ -69,7 +71,9 @@ impl GoalPageWidget {
             content = content.push(goal_entry.view());
         }
 
-        content.into()
+        let scrollable = Scrollable::new(&mut self.scroll).push(Container::new(content));
+
+        Container::new(scrollable).into()
     }
 
     pub fn add_goal(&mut self, new_goal: goals::Goal) {

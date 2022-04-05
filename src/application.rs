@@ -84,7 +84,6 @@ impl Application for MyApp {
                     .push(Text::new("Home"))
                     .push(self.tool_bar.view())
                     .push(self.goal_page.view());
-                // todo: let scrollable = Scrollable::new(&mut self.scroo).push(Container::new(content));
                 Container::new(content).into()
             }
             ApplicationPage::CreateGoalPage => self.create_new_goal_page.view(),

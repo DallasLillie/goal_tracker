@@ -276,19 +276,19 @@ impl EditGoalWidget {
             .push(Text::new("Start Date: "))
             .push(PickList::new(
                 &mut self.start_date_month_pick_list_state,
-                (1..12).collect::<Vec<i8>>(),
+                (1..=12).collect::<Vec<i8>>(),
                 self.start_date_selected_month,
                 Message::EditGoalWidgetStartDateMonthPicked,
             ))
             .push(PickList::new(
                 &mut self.start_date_day_pick_list_state,
-                (1..31).collect::<Vec<i8>>(),
+                (1..=31).collect::<Vec<i8>>(),
                 self.start_date_selected_day,
                 Message::EditGoalWidgetStartDateDayPicked,
             ))
             .push(PickList::new(
                 &mut self.start_date_year_pick_list_state,
-                (2020..2050).collect::<Vec<i16>>(),
+                (2020..=2050).collect::<Vec<i16>>(),
                 self.start_date_selected_year,
                 Message::EditGoalWidgetStartDateYearPicked,
             ));
@@ -297,19 +297,19 @@ impl EditGoalWidget {
             .push(Text::new("Due Date: "))
             .push(PickList::new(
                 &mut self.end_date_month_pick_list_state,
-                (1..12).collect::<Vec<i8>>(),
+                (1..=12).collect::<Vec<i8>>(),
                 self.end_date_selected_month,
                 Message::EditGoalWidgetEndDateMonthPicked,
             ))
             .push(PickList::new(
                 &mut self.end_date_day_pick_list_state,
-                (1..31).collect::<Vec<i8>>(),
+                (1..=31).collect::<Vec<i8>>(),
                 self.end_date_selected_day,
                 Message::EditGoalWidgetEndDateDayPicked,
             ))
             .push(PickList::new(
                 &mut self.end_date_year_pick_list_state,
-                (2020..2050).collect::<Vec<i16>>(),
+                (2020..=2050).collect::<Vec<i16>>(),
                 self.end_date_selected_year,
                 Message::EditGoalWidgetEndDateYearPicked,
             ));

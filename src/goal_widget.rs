@@ -56,8 +56,8 @@ impl GoalWidget {
                     Button::new(&mut self.delete_goal_button_state, Text::new("Delete"))
                         .on_press(Message::DeleteGoalPressed(self.goal.uuid)),
                 )
-                .push(Text::new(self.goal.text.to_string()).color(self.text_color))
                 .push(Text::new(self.goal.category.to_string()).color(self.text_color))
+                .push(Text::new(self.goal.text.to_string()).color(self.text_color))
                 .push(Text::new(self.goal.start_date.to_string()).color(self.text_color))
                 .push(Text::new(self.goal.due_date.to_string()).color(self.text_color))
                 .push(Text::new(self.goal.priority.to_string()).color(self.text_color))
