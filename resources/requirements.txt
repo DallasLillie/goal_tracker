@@ -4,6 +4,7 @@ Application
 - Grade Visualization
 - Points calculation
 - Points Visualization
+- ask to save before quitting
 
 Yearly Review
 - Goal page layout
@@ -30,3 +31,12 @@ Stretch Goals:
 - streamline goal creation
 - edit goal inline
 - prettify the whole thing
+
+
+
+bugs:
+- left the CurrentCompletion of ProgressType empty rather than giving it a 0
+```
+thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: ParseIntError { kind: Empty }', src\edit_goal_widget.rs:468:34
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+```

@@ -1,5 +1,5 @@
 use clap::Parser;
-use iced::{Application, Settings};
+use iced::{window, Application, Settings};
 
 // todo: are these supposed to be included here?
 mod application;
@@ -37,6 +37,16 @@ pub fn main() -> iced::Result {
             None => None,
         },
     });
+    settings.window = window::Settings {
+        size: (2448, 1024),
+        min_size: None,
+        max_size: None,
+        resizable: true,
+        decorations: true,
+        transparent: false,
+        always_on_top: false,
+        icon: None,
+    };
     settings.default_font = Some(include_bytes!("C:/Windows/fonts/calibri.ttf"));
     settings.default_text_size = 28;
     application::MyApp::run(settings)
