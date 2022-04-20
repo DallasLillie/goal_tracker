@@ -1,0 +1,7 @@
+uuid,text,category,start_date,due_date,priority,smart_flags,progress_type,status,notes,parent
+e6d0477d-888c-4189-b19e-790722e8f360,TWG 1,Relationship,2022-04-18,2022-04-24,Middle,31,0,InProgress,,
+1d3b2cef-18d0-493b-804c-1b3109c7201c,TWG 2,SelfImprovement,2022-04-18,2022-04-24,Middle,31,1593835521,InProgress,,
+76fc7e0b-8321-44aa-a70a-665d6169567b,TWG 3,Health,2022-04-18,2022-04-24,Top,31,0,InProgress,,
+fdabffa8-8ebf-435c-8355-10deb20b9daa,LWG 1,Miscellaneous,2022-04-11,2022-04-17,Middle,31,0,InProgress,,
+58a1a450-3ce6-4d23-9faf-49b84b0c91c5,LWG 2,ContentCreation,2022-04-11,2022-04-17,Low,31,0,InProgress,,
+e08afbae-68b3-454d-8d37-83fa8a9225e9,LWG 3,GameDevelopment,2022-04-11,2022-04-17,Bottom,31,1258291201,InProgress,,

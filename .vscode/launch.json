@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/target/debug/goal_tracker.exe",
             "args": [
-                "resources\\load_test.csv"
+                "resources\\weekly_test.csv"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

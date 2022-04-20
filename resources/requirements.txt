@@ -13,7 +13,13 @@ Monthly Review
 - Goal page layout
 
 Weekly Review
-- Goal page layout
+- This Week's Goals page
+- Title
+- Review This Week's Goals button
+    - Each Goal Review
+- Set Next Week's Goals button
+- Prev Week button
+- Next Week button
 
 Daily Review
 - button on main page
